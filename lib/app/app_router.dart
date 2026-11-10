@@ -1,0 +1,54 @@
+
+import 'package:go_router/go_router.dart';
+
+import '../features/home/pages/home_page.dart';
+import '../features/settings/pages/settings_page.dart';
+import '../features/gallery/pages/gallery_page.dart';
+import '../features/coloring/pages/coloring_page.dart';
+import '../features/completion/pages/completion_page.dart';
+
+abstract final class AppRoutes {
+  static const home = '/';
+  static const settings = '/settings';
+  static const gallery = '/gallery';
+  static const coloring = '/coloring';
+  static const completion = '/completion';
+}
+
+final appRouter = GoRouter(
+  initialLocation: AppRoutes.home,
+  routes: [
+    GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      builder: (context, state) => const SettingsPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.gallery,
+      builder: (context, state) => const GalleryPage(),
+    ),
+    GoRoute(
+      path: AppRoutes.coloring,
+      builder: (context, state) {
+        final imagePath = state.extra as String;
+
+        return ColoringPageScreen(
+          imagePath: imagePath,
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.completion,
+      builder: (context, state) {
+        final imagePath = state.extra as String;
+
+        return CompletionPage(
+          imagePath: imagePath,
+        );
+      },
+    ),
+  ],
+);

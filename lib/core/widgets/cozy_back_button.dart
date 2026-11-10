@@ -1,0 +1,39 @@
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../constants/asset_paths.dart';
+
+class CozyBackButton extends StatelessWidget {
+  final double width;
+  final double height;
+
+  const CozyBackButton({
+    super.key,
+    this.width = 52,
+    this.height = 40,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Go back',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (context.canPop()) {
+            context.pop();
+          }
+        },
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Image.asset(
+            AssetPaths.backButton,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
