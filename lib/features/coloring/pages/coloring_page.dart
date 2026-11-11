@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/services/button_sound_service.dart';
 import '../data/coloring_palettes.dart';
 import '../widgets/coloring_actions.dart';
 import '../widgets/coloring_canvas.dart';
@@ -24,7 +24,8 @@ class ColoringPageScreen extends StatefulWidget {
       _ColoringPageScreenState();
 }
 
-class _ColoringPageScreenState extends State<ColoringPageScreen> {
+class _ColoringPageScreenState
+    extends State<ColoringPageScreen> {
   String paletteId = ColoringPalettes.all.first.id;
   Color selectedColor = ColoringPalettes.all.first.colors.first;
   ColoringTool selectedTool = ColoringTool.brush;
@@ -72,19 +73,34 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
                       paletteId: paletteId,
                       selectedColor: selectedColor,
                       selectedTool: selectedTool,
-                      onToolSelected: (tool) =>
-                          setState(() => selectedTool = tool),
-                      onPaletteSelected: (id) => setState(() {
-                        paletteId = id;
-                        selectedColor = ColoringPalettes.all
-                            .firstWhere((p) => p.id == id)
-                            .colors.first;
-                      }),
-                      onColorSelected: (color) =>
-                          setState(() => selectedColor = color),
+
+                      onToolSelected: (tool) {
+                        ButtonSoundService.tap(() {
+                          setState(() => selectedTool = tool);
+                        });
+                      },
+
+                      onPaletteSelected: (id) {
+                        ButtonSoundService.tap(() {
+                          setState(() {
+                            paletteId = id;
+                            selectedColor = ColoringPalettes.all
+                                .firstWhere((p) => p.id == id)
+                                .colors.first;
+                          });
+                        });
+                      },
+
+                      onColorSelected: (color) {
+                        ButtonSoundService.tap(() {
+                          setState(() => selectedColor = color);
+                        });
+                      },
                     ),
                   ),
+
                   const SizedBox(width: 18),
+
                   Expanded(
                     child: Center(
                       child: AspectRatio(
@@ -95,16 +111,24 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 12),
+
                   ColoringActions(
                     onDone: () {
-                      context.push(
-                        AppRoutes.completion,
-                        extra: widget.imagePath,
-                      );
+                      ButtonSoundService.tap(() {
+                        context.push(
+                          AppRoutes.completion,
+                          extra: widget.imagePath,
+                        );
+                      });
                     },
-                    onDelete: () {},
-                    onUndo: () {},
+                    onDelete: () {
+                      ButtonSoundService.play();
+                    },
+                    onUndo: () {
+                      ButtonSoundService.play();
+                    },
                   ),
                 ],
               ),

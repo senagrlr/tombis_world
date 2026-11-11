@@ -1,4 +1,3 @@
-
 abstract final class AssetPaths {
   static const String homeBackground = 'assets/images/home/home_background.png';
   static const String homeLogo = 'assets/images/home/home_logo.png';

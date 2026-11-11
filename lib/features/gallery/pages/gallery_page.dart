@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/services/button_sound_service.dart';
 import '../data/gallery_data.dart';
 import '../widgets/gallery_header.dart';
 import '../widgets/gallery_categories.dart';
@@ -37,7 +37,9 @@ class _GalleryPageState extends State<GalleryPage> {
               categories: GalleryData.categories,
               selectedId: selectedCategory,
               onSelected: (id) {
-                setState(() => selectedCategory = id);
+                ButtonSoundService.tap(() {
+                  setState(() => selectedCategory = id);
+                });
               },
             ),
             Expanded(
@@ -45,10 +47,12 @@ class _GalleryPageState extends State<GalleryPage> {
                 key: ValueKey(selectedCategory),
                 pages: filteredPages,
                 onPageSelected: (page) {
-                  context.push(
-                    AppRoutes.coloring,
-                    extra: page.imagePath,
-                  );
+                  ButtonSoundService.tap(() {
+                    context.push(
+                      AppRoutes.coloring,
+                      extra: page.imagePath,
+                    );
+                  });
                 },
               ),
             ),

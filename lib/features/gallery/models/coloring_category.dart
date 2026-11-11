@@ -1,4 +1,3 @@
-
 class ColoringCategory {
   final String id;
   final String name;

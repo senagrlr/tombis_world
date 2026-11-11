@@ -1,4 +1,3 @@
-
 class ColoringPage {
   final String id;
   final String categoryId;

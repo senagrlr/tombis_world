@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/services/button_sound_service.dart';
+
 import '../widgets/home_background.dart';
 import '../widgets/home_logo.dart';
 import '../widgets/home_play_button.dart';
@@ -32,6 +33,7 @@ class HomePage extends StatelessWidget {
                   width: 82 * scale,
                   child: HomeSettingsButton(
                     onPressed: () {
+                      ButtonSoundService.play();
                       context.push(AppRoutes.settings);
                     },
                   ),
@@ -52,7 +54,10 @@ class HomePage extends StatelessWidget {
                 left: width * 0.24,
                 width: width * 0.52,
                 child: HomePlayButton(
-                  onPressed: () => context.push(AppRoutes.gallery),
+                  onPressed: () {
+                    ButtonSoundService.play();
+                    context.push(AppRoutes.gallery);
+                  },
                 ),
               ),
             ],

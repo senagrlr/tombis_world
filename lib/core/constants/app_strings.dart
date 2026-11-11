@@ -1,4 +1,3 @@
-
 abstract final class AppStrings {
   static const appName = "Tombi's World";
   static const play = 'PLAY';

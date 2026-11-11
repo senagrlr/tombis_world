@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/services/button_sound_service.dart';
 import '../controllers/settings_controller.dart';
 import '../widgets/settings_header.dart';
 import '../widgets/settings_option.dart';
@@ -26,11 +27,15 @@ class SettingsPage extends ConsumerWidget {
                 child: Column(
                   children: [
                     const Spacer(flex: 2),
+
                     for (final item in [
                       ('music', 'Music', Icons.music_note),
                       ('sound', 'Sound', Icons.volume_up),
-                      ('notification', 'Notification',
-                      Icons.notifications),
+                      (
+                      'notification',
+                      'Notification',
+                      Icons.notifications,
+                      ),
                     ])
                       SettingsOption(
                         title: item.$2,
@@ -38,14 +43,24 @@ class SettingsPage extends ConsumerWidget {
                         value: settings?[item.$1] ?? false,
                         onChanged: settings == null
                             ? null
-                            : (value) =>
-                            controller.updateSetting(item.$1, value),
+                            : (value) {
+                          ButtonSoundService.tap(() {
+                            controller.updateSetting(
+                              item.$1,
+                              value,
+                            );
+                          });
+                        },
                       ),
+
                     SettingsOption(
                       title: 'Privacy',
                       icon: Icons.description,
-                      onTap: () {},
+                      onTap: () {
+                        ButtonSoundService.play();
+                      },
                     ),
+
                     const Spacer(flex: 3),
                     const RateUsButton(),
                     const Spacer(),

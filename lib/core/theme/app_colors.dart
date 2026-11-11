@@ -10,4 +10,5 @@ abstract final class AppColors {
   static const lightBlue = Color(0xFFBEDAF7);
   static const white = Color(0xFFFFFFFF);
   static const borderBlue = Color(0xFF4797E8);
+  static const splashBg = Color(0xFFFAF5B3);
 }

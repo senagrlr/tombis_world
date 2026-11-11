@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../models/coloring_page.dart';
 import 'gallery_thumbnail.dart';

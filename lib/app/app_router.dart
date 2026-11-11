@@ -1,6 +1,6 @@
-
 import 'package:go_router/go_router.dart';
 
+import '../features/splash/pages/splash_page.dart';
 import '../features/home/pages/home_page.dart';
 import '../features/settings/pages/settings_page.dart';
 import '../features/gallery/pages/gallery_page.dart';
@@ -8,6 +8,7 @@ import '../features/coloring/pages/coloring_page.dart';
 import '../features/completion/pages/completion_page.dart';
 
 abstract final class AppRoutes {
+  static const splash = '/splash';
   static const home = '/';
   static const settings = '/settings';
   static const gallery = '/gallery';
@@ -16,8 +17,12 @@ abstract final class AppRoutes {
 }
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.home,
+  initialLocation: AppRoutes.splash,
   routes: [
+    GoRoute(
+      path: AppRoutes.splash,
+      builder: (context, state) => const SplashPage(),
+    ),
     GoRoute(
       path: AppRoutes.home,
       builder: (context, state) => const HomePage(),
