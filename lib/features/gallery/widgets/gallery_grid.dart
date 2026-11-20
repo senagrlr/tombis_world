@@ -14,19 +14,16 @@ class GalleryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (pages.isEmpty) {
-      return const Center(
-        child: Text('New coloring pages coming soon!'),
-      );
-    }
-
     return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(25, 8, 25, 24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(32, 8, 32, 35),
+      gridDelegate:
+      const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16,
+        crossAxisSpacing: 22,
         mainAxisSpacing: 24,
-        childAspectRatio: 1.28,
+        childAspectRatio: 0.90,
       ),
       itemCount: pages.length,
       itemBuilder: (context, index) {

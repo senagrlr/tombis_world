@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class BrushSizeSlider extends StatelessWidget {
@@ -19,59 +18,76 @@ class BrushSizeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 4,
-      ),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF3E2),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 36,
-            height: 36,
-            child: Center(
-              child: Container(
-                width: 8 + (value - min) / (max - min) * 28,
-                height: 8 + (value - min) / (max - min) * 28,
-                decoration: BoxDecoration(
-                  color: previewColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 1,
-                  ),
+    final progress =
+    ((value - min) / (max - min)).clamp(0.0, 1.0);
+
+    // Boyut arttıkça tutamaç da büyür.
+    final thumbSize = 20.0 + (progress * 16.0);
+
+    const trackColor = Color(0xFF795039);
+
+    return SizedBox(
+      height: 46,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final trackWidth = constraints.maxWidth - 36;
+
+          void updateValue(double dx) {
+            final fraction =
+            (dx / trackWidth).clamp(0.0, 1.0);
+
+            onChanged(min + fraction * (max - min));
+          }
+
+          return Center(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragUpdate: (details) {
+                updateValue(details.localPosition.dx - 18);
+              },
+              onTapDown: (details) {
+                updateValue(details.localPosition.dx - 18);
+              },
+              child: SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Positioned(
+                      left: 18,
+                      right: 18,
+                      child: Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: trackColor,
+                          borderRadius:
+                          BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 18 + trackWidth * progress
+                          - thumbSize / 2,
+                      child: Container(
+                        width: thumbSize,
+                        height: thumbSize,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFDF7),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: trackColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 6),
-          Flexible(
-            child: FractionallySizedBox(
-              widthFactor: 0.8,
-              child: Slider(
-                value: value,
-                min: min,
-                max: max,
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 30,
-            child: Text(
-              value.round().toString(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

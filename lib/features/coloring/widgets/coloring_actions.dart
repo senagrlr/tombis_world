@@ -15,28 +15,47 @@ class ColoringActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actions = [
-      (AssetPaths.doneButton, onDone),
-      (AssetPaths.deleteButton, onDelete),
-      (AssetPaths.undoButton, onUndo),
-    ];
+    Widget actionButton(
+        String asset,
+        VoidCallback onTap,
+        ) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox(
+          width: 52,
+          height: 40,
+          child: Image.asset(
+            asset,
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        for (final action in actions)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: GestureDetector(
-              onTap: action.$2,
-              child: Image.asset(
-                action.$1,
-                width: 49,
-                height: 38,
-                fit: BoxFit.contain,
-              ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            actionButton(
+              AssetPaths.deleteButton,
+              onDelete,
             ),
-          ),
+            const SizedBox(width: 6),
+            actionButton(
+              AssetPaths.doneButton,
+              onDone,
+            ),
+          ],
+        ),
+        const SizedBox(height: 3),
+        actionButton(
+          AssetPaths.undoButton,
+          onUndo,
+        ),
       ],
     );
   }

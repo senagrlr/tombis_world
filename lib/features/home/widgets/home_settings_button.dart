@@ -15,10 +15,15 @@ class HomeSettingsButton extends StatelessWidget {
       button: true,
       label: 'Settings',
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onPressed,
-        child: Image.asset(
-          AssetPaths.settingsIcon,
-          fit: BoxFit.contain,
+        child: SizedBox(
+          width: 52,
+          height: 40,
+          child: Image.asset(
+            AssetPaths.settingsIcon,
+            fit: BoxFit.contain,
+          ),
         ),
       ),
     );

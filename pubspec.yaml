@@ -75,15 +75,14 @@ flutter:
   assets:
     - assets/images/home/
     - assets/images/common/
-    - assets/images/coloring/halloween/
-    - assets/images/coloring/summer/
-    - assets/images/coloring/love/
-    - assets/images/coloring/friends/
+    - assets/images/coloring/
     - assets/images/coloring_ui/
     - assets/images/completion_ui/
     - assets/animations/
     - assets/images/splash/
     - assets/sounds/
+    - assets/images/gallery/
+    - assets/images/gallery/thumbnails/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

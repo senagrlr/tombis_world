@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
 
 class GalleryHeader extends StatelessWidget {
@@ -7,87 +6,30 @@ class GalleryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
-
-    return SizedBox(
-      height: 205,
-      child: Stack(
-        clipBehavior: Clip.none,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+      child: Column(
         children: [
-          Positioned.fill(
-            child: PhysicalShape(
-              clipper: _WaveClipper(),
-              color: AppColors.cream,
-              elevation: 4,
-              shadowColor: const Color(0x66000000),
-              child: const SizedBox.expand(),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: CozyBackButton(
+              width: 52,
+              height: 40,
             ),
           ),
-          Positioned(
-            top: topPadding + 12,
-            left: 25,
-            child: const CozyBackButton(),
-          ),
-          const Positioned(
-            top: 76,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.star_rounded,
-                  size: 33,
-                  color: Color(0xFFFFD36B),
-                ),
-                SizedBox(width: 35),
-                Text(
-                  'Rate\nus',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    height: 0.95,
-                    fontSize: 36,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.brown,
-                  ),
-                ),
-                SizedBox(width: 35),
-                Icon(
-                  Icons.star_rounded,
-                  size: 33,
-                  color: Color(0xFFFFD36B),
-                ),
-              ],
+          const SizedBox(height: 18),
+          const Text(
+            'Tombi’s\nAdventures',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 36,
+              height: 1.1,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFFA77554),
             ),
           ),
         ],
       ),
     );
   }
-}
-
-class _WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path()..lineTo(0, size.height - 38);
-    final waveWidth = size.width / 5;
-
-    for (var i = 0; i < 5; i++) {
-      final x = i * waveWidth;
-
-      path.quadraticBezierTo(
-        x + waveWidth / 2,
-        size.height + 25,
-        x + waveWidth,
-        size.height - 38,
-      );
-    }
-
-    return path
-      ..lineTo(size.width, 0)
-      ..close();
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

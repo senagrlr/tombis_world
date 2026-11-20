@@ -1,11 +1,13 @@
 class ColoringPage {
   final String id;
-  final String categoryId;
+  final String title;
+  final String thumbnailPath;
   final String imagePath;
 
   const ColoringPage({
     required this.id,
-    required this.categoryId,
+    required this.title,
+    required this.thumbnailPath,
     required this.imagePath,
   });
 }

@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/cozy_back_button.dart';
 import '../../../core/services/button_sound_service.dart';
+
 import '../data/coloring_palettes.dart';
 import '../widgets/coloring_actions.dart';
 import '../widgets/coloring_canvas.dart';
@@ -26,17 +28,22 @@ class ColoringPageScreen extends StatefulWidget {
 
 class _ColoringPageScreenState
     extends State<ColoringPageScreen> {
-  final ColoringController _controller = ColoringController();
-  final GlobalKey<ColoringCanvasState> _canvasKey = GlobalKey<ColoringCanvasState>();
+  final ColoringController _controller =
+  ColoringController();
+
+  final GlobalKey<ColoringCanvasState> _canvasKey =
+  GlobalKey<ColoringCanvasState>();
+
   bool _isExporting = false;
 
   @override
   void initState() {
     super.initState();
+
     _controller.addListener(_onControllerChanged);
+
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
     ]);
   }
 
@@ -51,36 +58,107 @@ class _ColoringPageScreenState
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
+
     super.dispose();
   }
-
 
   Future<void> _confirmReset() async {
     final shouldReset = await showDialog<bool>(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Reset coloring?'),
-          content: const Text(
-            'All your coloring will be erased. '
-                'You cannot undo this action.',
+        return Dialog(
+          backgroundColor: const Color(0xFFFFF2DE),
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+            side: const BorderSide(
+              color: Color(0xFF5B9EE2),
+              width: 3,
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              },
-              child: const Text('Cancel'),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 22,
+              vertical: 28,
             ),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(true);
-              },
-              child: const Text('Reset'),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Reset Coloring?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF704B36),
+                  ),
+                ),
+
+                const SizedBox(height: 26),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // X - İptal
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Navigator.of(dialogContext).pop(false);
+                      },
+                      child: Container(
+                        width: 76,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2A5A5),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: const Color(0xFF704B36),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Color(0xFF704B36),
+                          size: 30,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Tik - Sıfırla
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Navigator.of(dialogContext).pop(true);
+                      },
+                      child: Container(
+                        width: 76,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFB9CB85),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: const Color(0xFF704B36),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          color: Color(0xFF704B36),
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -106,7 +184,9 @@ class _ColoringPageScreenState
       if (!mounted) return;
 
       if (pngBytes == null) {
-        throw StateError('Coloring image is not ready.');
+        throw StateError(
+          'Coloring image is not ready.',
+        );
       }
 
       await context.push(
@@ -149,99 +229,125 @@ class _ColoringPageScreenState
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, size) {
-            final sideWidth =
-            (size.maxWidth * 0.32).clamp(185.0, 280.0);
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'assets/images/gallery/gallery_background.png',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final canvasSize =
+                  constraints.maxWidth;
 
-            return Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: sideWidth,
-                    child: ColoringSidebar(
-                      palette: palette,
-                      paletteId: paletteId,
-                      selectedColor: selectedColor,
-                      selectedTool: selectedTool,
-                      brushWidth: _controller.brushWidth,
-                      eraserWidth: _controller.eraserWidth,
-                      onBrushWidthChanged: (width) {
-                        _controller.setBrushWidth(width);
-                      },
-                      onEraserWidthChanged: (width) {
-                        _controller.setEraserWidth(width);
-                      },
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Üst butonlar
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        24, 16, 24, 12,
+                      ),
+                      child: Row(
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          const CozyBackButton(),
+                          const Spacer(),
+                          ColoringActions(
+                            onDone: () {
+                              if (_isExporting) return;
 
-                      onToolSelected: (tool) {
-                        ButtonSoundService.tap(() {
-                          _controller.selectTool(tool);
-                        });
-                      },
-
-                      onPaletteSelected: (id) {
-                        ButtonSoundService.tap(() {
-                          _controller.selectPalette(id);
-                        });
-                      },
-
-                      onColorSelected: (color) {
-                        ButtonSoundService.tap(() {
-                          _controller.selectColor(color);
-                        });
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(width: 18),
-
-                  Expanded(
-                    child: Center(
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: ColoringCanvas(
-                          key: _canvasKey,
-                          imagePath: widget.imagePath,
-                          selectedColor: selectedColor,
-                          selectedTool: selectedTool,
-                          brushWidth: _controller.brushWidth,
-                          eraserWidth: _controller.eraserWidth,
-                          onColorPicked: (color) {
-                            _controller.selectPickedColor(color);
-                          },
-                        ),
+                              ButtonSoundService.tap(() {
+                                _completeColoring();
+                              });
+                            },
+                            onDelete: () {
+                              ButtonSoundService.tap(() {
+                                _confirmReset();
+                              });
+                            },
+                            onUndo: () {
+                              ButtonSoundService.tap(() {
+                                _canvasKey.currentState
+                                    ?.undo();
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ),
 
-                  const SizedBox(width: 12),
+                    // Mevcut boyama alanı
+                    SizedBox(
+                      width: canvasSize,
+                      height: canvasSize,
+                      child: ColoringCanvas(
+                        key: _canvasKey,
+                        imagePath: widget.imagePath,
+                        selectedColor: selectedColor,
+                        selectedTool: selectedTool,
+                        brushWidth: _controller.brushWidth,
+                        eraserWidth: _controller.eraserWidth,
+                        onColorPicked: (color) {
+                          _controller.selectPickedColor(
+                            color,
+                          );
+                        },
+                      ),
+                    ),
 
-                  ColoringActions(
-                    onDone: () {
-                      if (_isExporting) return;
+                    const SizedBox(height: 12),
 
-                      ButtonSoundService.tap(() {
-                        _completeColoring();
-                      });
-                    },
-                    onDelete: () {
-                      ButtonSoundService.tap(() {
-                        _confirmReset();
-                      });
-                    },
-                    onUndo: () {
-                      ButtonSoundService.tap(() {
-                        _canvasKey.currentState?.undo();
-                      });
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
+                    // Araçlar, slider ve paletler
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        24, 0, 24, 24,
+                      ),
+                      child: ColoringSidebar(
+                        palette: palette,
+                        paletteId: paletteId,
+                        selectedColor: selectedColor,
+                        selectedTool: selectedTool,
+                        brushWidth: _controller.brushWidth,
+                        eraserWidth: _controller.eraserWidth,
+
+                        onBrushWidthChanged: (width) {
+                          _controller.setBrushWidth(width);
+                        },
+
+                        onEraserWidthChanged: (width) {
+                          _controller.setEraserWidth(width);
+                        },
+
+                        onToolSelected: (tool) {
+                          ButtonSoundService.tap(() {
+                            _controller.selectTool(tool);
+                          });
+                        },
+
+                        onPaletteSelected: (id) {
+                          ButtonSoundService.tap(() {
+                            _controller.selectPalette(id);
+                          });
+                        },
+
+                        onColorSelected: (color) {
+                          ButtonSoundService.tap(() {
+                            _controller.selectColor(color);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
