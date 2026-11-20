@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import 'dart:typed_data';
+
 import '../features/splash/pages/splash_page.dart';
 import '../features/home/pages/home_page.dart';
 import '../features/settings/pages/settings_page.dart';
@@ -48,10 +50,17 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.completion,
       builder: (context, state) {
-        final imagePath = state.extra as String;
+        final extra = state.extra;
+
+        if (extra is Map<String, dynamic>) {
+          return CompletionPage(
+            imagePath: extra['imagePath'] as String,
+            paintedImage: extra['paintedImage'] as Uint8List?,
+          );
+        }
 
         return CompletionPage(
-          imagePath: imagePath,
+          imagePath: extra as String,
         );
       },
     ),

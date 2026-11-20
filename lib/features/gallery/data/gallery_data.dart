@@ -13,7 +13,7 @@ abstract final class GalleryData {
     ColoringPage(
       id: 'halloween_01',
       categoryId: 'halloween',
-      imagePath: 'assets/images/coloring/halloween/01.svg',
+        imagePath: 'assets/images/coloring/halloween/image_1.svg',
     ),
     ColoringPage(
       id: 'summer_01',
