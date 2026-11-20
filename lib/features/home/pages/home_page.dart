@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,18 +20,18 @@ class HomePage extends StatelessWidget {
         builder: (context, constraints) {
           final width = constraints.maxWidth;
           final height = constraints.maxHeight;
-          final scale = (width / 402).clamp(0.7, 1.3);
 
           return Stack(
             children: [
               const HomeBackground(),
 
-              // Settings Button
+              // Settings Button - 52 x 40
               Positioned(
                 top: height * 0.05,
                 left: width * 0.09,
                 child: SizedBox(
-                  width: 82 * scale,
+                  width: 52,
+                  height: 40,
                   child: HomeSettingsButton(
                     onPressed: () {
                       ButtonSoundService.play();
@@ -43,16 +44,16 @@ class HomePage extends StatelessWidget {
               // Home Logo
               Positioned(
                 top: height * 0.16,
-                left: width * 0.10,
-                width: width * 0.80,
+                left: width * 0.13,
+                width: width * 0.74,
                 child: const HomeLogo(),
               ),
 
               // Play Button
               Positioned(
                 top: height * 0.38,
-                left: width * 0.24,
-                width: width * 0.52,
+                left: width * 0.265,
+                width: width * 0.47,
                 child: HomePlayButton(
                   onPressed: () {
                     ButtonSoundService.play();

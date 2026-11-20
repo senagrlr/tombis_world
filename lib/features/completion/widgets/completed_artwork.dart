@@ -1,6 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:typed_data';
 
 class CompletedArtwork extends StatelessWidget {
   final String imagePath;
@@ -16,7 +17,7 @@ class CompletedArtwork extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: AspectRatio(
-        aspectRatio: 1.29,
+        aspectRatio: 1,
         child: paintedImage != null
             ? Image.memory(
           paintedImage!,

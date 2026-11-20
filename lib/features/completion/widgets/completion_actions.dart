@@ -12,14 +12,23 @@ class CompletionActions extends StatelessWidget {
     required this.onShare,
   });
 
-  Widget _button(String asset, VoidCallback onTap) {
+  static const double buttonWidth = 52;
+  static const double buttonHeight = 40;
+
+  static Widget actionButton(
+      String asset,
+      VoidCallback onTap,
+      ) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Image.asset(
-        asset,
-        width: 52,
-        height: 42,
-        fit: BoxFit.contain,
+      child: SizedBox(
+        width: buttonWidth,
+        height: buttonHeight,
+        child: Image.asset(
+          asset,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }
@@ -29,12 +38,22 @@ class CompletionActions extends StatelessWidget {
     const path = 'assets/images/completion_ui/';
 
     return Column(
+      mainAxisSize: MainAxisSize.max,
       children: [
-        _button('${path}home_button.png', onHome),
+        actionButton(
+          '${path}home_button.png',
+          onHome,
+        ),
         const SizedBox(height: 5),
-        _button('${path}download_button.png', onDownload),
+        actionButton(
+          '${path}download_button.png',
+          onDownload,
+        ),
         const Spacer(),
-        _button('${path}share_button.png', onShare),
+        actionButton(
+          '${path}share_button.png',
+          onShare,
+        ),
       ],
     );
   }

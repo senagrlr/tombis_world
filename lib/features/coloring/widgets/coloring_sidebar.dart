@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/cozy_back_button.dart';
 import '../data/coloring_palettes.dart';
 import '../models/color_palette.dart';
+import '../models/coloring_tool.dart';
 import 'coloring_tools.dart';
 import 'palette_selector.dart';
 import 'color_swatches.dart';
-import '../models/coloring_tool.dart';
 import 'brush_size_slider.dart';
 
-class ColoringSidebar extends StatefulWidget {
+class ColoringSidebar extends StatelessWidget {
   final ColorPalette palette;
   final String paletteId;
   final Color selectedColor;
@@ -38,99 +37,61 @@ class ColoringSidebar extends StatefulWidget {
   });
 
   @override
-  State<ColoringSidebar> createState() => _ColoringSidebarState();
-}
-
-class _ColoringSidebarState extends State<ColoringSidebar> {
-  bool _isSizeSliderOpen = false;
-
-  void _handleToolSelected(ColoringTool tool) {
-    setState(() {
-      if (tool == widget.selectedTool &&
-          (tool == ColoringTool.brush ||
-              tool == ColoringTool.eraser)) {
-        _isSizeSliderOpen = !_isSizeSliderOpen;
-      } else {
-        _isSizeSliderOpen = false;
-      }
-    });
-
-    widget.onToolSelected(tool);
-  }
-
-  void _closeSizeSlider() {
-    if (!_isSizeSliderOpen) return;
-
-    setState(() {
-      _isSizeSliderOpen = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final showSlider =
+        selectedTool == ColoringTool.brush ||
+            selectedTool == ColoringTool.eraser;
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: CozyBackButton(),
-        ),
-        const SizedBox(height: 12),
-        TapRegion(
-          onTapOutside: (_) => _closeSizeSlider(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ColoringTools(
-                selected: widget.selectedTool,
-                onSelected: _handleToolSelected,
-              ),
-
-              if (_isSizeSliderOpen &&
-                  (widget.selectedTool == ColoringTool.brush ||
-                      widget.selectedTool == ColoringTool.eraser)) ...[
-                const SizedBox(height: 10),
-
-                Center(
-                  child: FractionallySizedBox(
-                    widthFactor: 0.82,
-                    child: BrushSizeSlider(
-                      value: widget.selectedTool == ColoringTool.brush
-                          ? widget.brushWidth
-                          : widget.eraserWidth,
-                      min: 8,
-                      max: widget.selectedTool == ColoringTool.brush
-                          ? 96
-                          : 120,
-                      previewColor: widget.selectedTool == ColoringTool.brush
-                          ? widget.selectedColor
-                          : Colors.white,
-                      onChanged: widget.selectedTool == ColoringTool.brush
-                          ? widget.onBrushWidthChanged
-                          : widget.onEraserWidthChanged,
-                    ),
-                  ),
-                ),
-              ],
-            ],
+        Center(
+          child: ColoringTools(
+            selected: selectedTool,
+            onSelected: onToolSelected,
           ),
         ),
 
-        const Spacer(),
-        PaletteSelector(
-          palettes: ColoringPalettes.all,
-          selectedId: widget.paletteId,
-          onSelected: widget.onPaletteSelected,
-        ),
-        const SizedBox(height: 5),
-        Flexible(
-          flex: 3,
-          child: SingleChildScrollView(
-            child: ColorSwatches(
-              palette: widget.palette,
-              selectedColor: widget.selectedColor,
-              onSelected: widget.onColorSelected,
+        if (showSlider) ...[
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+            ),
+            child: BrushSizeSlider(
+              value: selectedTool == ColoringTool.brush
+                  ? brushWidth
+                  : eraserWidth,
+              min: 8,
+              max: selectedTool == ColoringTool.brush
+                  ? 96
+                  : 120,
+              previewColor:
+              selectedTool == ColoringTool.brush
+                  ? selectedColor
+                  : Colors.white,
+              onChanged:
+              selectedTool == ColoringTool.brush
+                  ? onBrushWidthChanged
+                  : onEraserWidthChanged,
             ),
           ),
+        ],
+
+        const SizedBox(height: 8),
+
+        PaletteSelector(
+          palettes: ColoringPalettes.all,
+          selectedId: paletteId,
+          onSelected: onPaletteSelected,
+        ),
+
+        const SizedBox(height: 6),
+
+        ColorSwatches(
+          palette: palette,
+          selectedColor: selectedColor,
+          onSelected: onColorSelected,
         ),
       ],
     );

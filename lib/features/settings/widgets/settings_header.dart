@@ -23,11 +23,17 @@ class SettingsHeader extends StatelessWidget {
               child: const SizedBox.expand(),
             ),
           ),
+
+          // Back Button - 52 x 40
           Positioned(
             top: topPadding + 12,
             left: 25,
-            child: const CozyBackButton(),
+            child: const CozyBackButton(
+              width: 52,
+              height: 40,
+            ),
           ),
+
           const Positioned(
             top: 82,
             left: 0,
