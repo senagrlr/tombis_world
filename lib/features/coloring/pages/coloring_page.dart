@@ -8,8 +8,8 @@ import '../../../core/services/button_sound_service.dart';
 import '../data/coloring_palettes.dart';
 import '../widgets/coloring_actions.dart';
 import '../widgets/coloring_canvas.dart';
-import '../widgets/coloring_tools.dart';
 import '../widgets/coloring_sidebar.dart';
+import '../controller/coloring_controller.dart';
 
 class ColoringPageScreen extends StatefulWidget {
   final String imagePath;
@@ -26,17 +26,24 @@ class ColoringPageScreen extends StatefulWidget {
 
 class _ColoringPageScreenState
     extends State<ColoringPageScreen> {
-  String paletteId = ColoringPalettes.all.first.id;
-  Color selectedColor = ColoringPalettes.all.first.colors.first;
-  ColoringTool selectedTool = ColoringTool.brush;
+  final ColoringController _controller = ColoringController();
+  final GlobalKey<ColoringCanvasState> _canvasKey = GlobalKey<ColoringCanvasState>();
+  bool _isExporting = false;
 
   @override
   void initState() {
     super.initState();
+    _controller.addListener(_onControllerChanged);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+  }
+
+  void _onControllerChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -44,11 +51,98 @@ class _ColoringPageScreenState
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    _controller.removeListener(_onControllerChanged);
+    _controller.dispose();
     super.dispose();
+  }
+
+
+  Future<void> _confirmReset() async {
+    final shouldReset = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Reset coloring?'),
+          content: const Text(
+            'All your coloring will be erased. '
+                'You cannot undo this action.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Reset'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || shouldReset != true) return;
+
+    _canvasKey.currentState?.resetColoring();
+  }
+
+  Future<void> _completeColoring() async {
+    if (_isExporting) return;
+
+    final canvas = _canvasKey.currentState;
+    if (canvas == null) return;
+
+    setState(() {
+      _isExporting = true;
+    });
+
+    try {
+      final pngBytes = await canvas.exportPng();
+
+      if (!mounted) return;
+
+      if (pngBytes == null) {
+        throw StateError('Coloring image is not ready.');
+      }
+
+      await context.push(
+        AppRoutes.completion,
+        extra: {
+          'imagePath': widget.imagePath,
+          'paintedImage': pngBytes,
+        },
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      debugPrint('Coloring export error: $error');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Could not finish coloring. Please try again.',
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isExporting = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final paletteId = _controller.paletteId;
+    final selectedColor = _controller.selectedColor;
+    final selectedTool = _controller.selectedTool;
+
     final palette = ColoringPalettes.all.firstWhere(
           (item) => item.id == paletteId,
     );
@@ -73,27 +167,30 @@ class _ColoringPageScreenState
                       paletteId: paletteId,
                       selectedColor: selectedColor,
                       selectedTool: selectedTool,
+                      brushWidth: _controller.brushWidth,
+                      eraserWidth: _controller.eraserWidth,
+                      onBrushWidthChanged: (width) {
+                        _controller.setBrushWidth(width);
+                      },
+                      onEraserWidthChanged: (width) {
+                        _controller.setEraserWidth(width);
+                      },
 
                       onToolSelected: (tool) {
                         ButtonSoundService.tap(() {
-                          setState(() => selectedTool = tool);
+                          _controller.selectTool(tool);
                         });
                       },
 
                       onPaletteSelected: (id) {
                         ButtonSoundService.tap(() {
-                          setState(() {
-                            paletteId = id;
-                            selectedColor = ColoringPalettes.all
-                                .firstWhere((p) => p.id == id)
-                                .colors.first;
-                          });
+                          _controller.selectPalette(id);
                         });
                       },
 
                       onColorSelected: (color) {
                         ButtonSoundService.tap(() {
-                          setState(() => selectedColor = color);
+                          _controller.selectColor(color);
                         });
                       },
                     ),
@@ -104,9 +201,17 @@ class _ColoringPageScreenState
                   Expanded(
                     child: Center(
                       child: AspectRatio(
-                        aspectRatio: 1.18,
+                        aspectRatio: 1,
                         child: ColoringCanvas(
+                          key: _canvasKey,
                           imagePath: widget.imagePath,
+                          selectedColor: selectedColor,
+                          selectedTool: selectedTool,
+                          brushWidth: _controller.brushWidth,
+                          eraserWidth: _controller.eraserWidth,
+                          onColorPicked: (color) {
+                            _controller.selectPickedColor(color);
+                          },
                         ),
                       ),
                     ),
@@ -116,18 +221,21 @@ class _ColoringPageScreenState
 
                   ColoringActions(
                     onDone: () {
+                      if (_isExporting) return;
+
                       ButtonSoundService.tap(() {
-                        context.push(
-                          AppRoutes.completion,
-                          extra: widget.imagePath,
-                        );
+                        _completeColoring();
                       });
                     },
                     onDelete: () {
-                      ButtonSoundService.play();
+                      ButtonSoundService.tap(() {
+                        _confirmReset();
+                      });
                     },
                     onUndo: () {
-                      ButtonSoundService.play();
+                      ButtonSoundService.tap(() {
+                        _canvasKey.currentState?.undo();
+                      });
                     },
                   ),
                 ],

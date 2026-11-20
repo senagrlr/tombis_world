@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/asset_paths.dart';
-
-enum ColoringTool { brush, fill, eraser, picker }
+import '../models/coloring_tool.dart';
 
 class ColoringTools extends StatelessWidget {
   final ColoringTool selected;
