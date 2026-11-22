@@ -1,8 +1,9 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/notification_service.dart';
+import '../../../core/services/background_music_service.dart';
+import '../../../core/services/button_sound_service.dart';
 import '../models/settings_state.dart';
 
 final settingsProvider =
@@ -21,14 +22,21 @@ class SettingsController extends AsyncNotifier<SettingsState> {
       notification: prefs.getBool('notification') ?? false,
     );
 
+    // Kayıtlı ses ayarlarını uygula.
+    await ButtonSoundService.setEnabled(settings.sound);
+    await BackgroundMusicService.setEnabled(settings.music);
+
     if (settings.notification) {
       final hasPermission =
       await NotificationService.instance.hasPermission();
 
       if (!hasPermission) {
         settings = settings.copyWith(notification: false);
+
         await prefs.setBool('notification', false);
-        await NotificationService.instance.cancelDailyNotifications();
+
+        await NotificationService.instance
+            .cancelDailyNotifications();
       }
     }
 
@@ -47,10 +55,12 @@ class SettingsController extends AsyncNotifier<SettingsState> {
       final notificationService = NotificationService.instance;
 
       if (value) {
-        var hasPermission = await notificationService.hasPermission();
+        var hasPermission =
+        await notificationService.hasPermission();
 
         if (!hasPermission) {
-          hasPermission = await notificationService.requestPermission();
+          hasPermission =
+          await notificationService.requestPermission();
         }
 
         if (!hasPermission) {
@@ -67,6 +77,16 @@ class SettingsController extends AsyncNotifier<SettingsState> {
       } else {
         await notificationService.cancelDailyNotifications();
       }
+    }
+
+    // Music ayarı
+    if (key == 'music') {
+      await BackgroundMusicService.setEnabled(value);
+    }
+
+    // Sound ayarı
+    if (key == 'sound') {
+      await ButtonSoundService.setEnabled(value);
     }
 
     final updated = switch (key) {

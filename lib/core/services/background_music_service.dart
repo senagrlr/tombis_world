@@ -5,8 +5,10 @@ class BackgroundMusicService {
   BackgroundMusicService._();
 
   static final AudioPlayer _player = AudioPlayer();
+
   static bool _initialized = false;
   static bool _started = false;
+  static bool _enabled = true;
 
   static Future<void> initialize() async {
     if (_initialized) return;
@@ -17,18 +19,19 @@ class BackgroundMusicService {
     _initialized = true;
   }
 
-  // Yalnızca ilk başlangıçta müziği aç
   static Future<void> start() async {
-    if (_started) return;
+    if (!_enabled || _started) return;
 
     try {
       await initialize();
 
-      _started = true;
+      if (!_enabled) return;
 
       await _player.play(
         AssetSource('sounds/tombi_cozy_background.wav'),
       );
+
+      _started = true;
     } catch (e) {
       _started = false;
       debugPrint('Müzik başlatma hatası: $e');
@@ -36,16 +39,30 @@ class BackgroundMusicService {
   }
 
   static Future<void> pause() async {
+    if (!_started) return;
+
     await _player.pause();
   }
 
   static Future<void> resume() async {
+    if (!_enabled) return;
+
     if (!_started) {
       await start();
       return;
     }
 
     await _player.resume();
+  }
+
+  static Future<void> setEnabled(bool enabled) async {
+    _enabled = enabled;
+
+    if (enabled) {
+      await resume();
+    } else {
+      await pause();
+    }
   }
 
   static Future<void> setVolume(double volume) async {

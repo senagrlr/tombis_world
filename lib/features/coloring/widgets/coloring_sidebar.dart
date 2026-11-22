@@ -53,7 +53,7 @@ class ColoringSidebar extends StatelessWidget {
         ),
 
         if (showSlider) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 32,
@@ -78,7 +78,7 @@ class ColoringSidebar extends StatelessWidget {
           ),
         ],
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
 
         PaletteSelector(
           palettes: ColoringPalettes.all,
@@ -86,7 +86,7 @@ class ColoringSidebar extends StatelessWidget {
           onSelected: onPaletteSelected,
         ),
 
-        const SizedBox(height: 6),
+        const SizedBox(height: 3),
 
         ColorSwatches(
           palette: palette,

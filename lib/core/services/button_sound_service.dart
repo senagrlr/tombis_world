@@ -6,8 +6,9 @@ class ButtonSoundService {
 
   static final AudioPlayer _player = AudioPlayer();
 
+  static bool _enabled = true;
+
   static Future<void> initialize() async {
-    // Buton sesi müziğin ses odağını almasın.
     await _player.setAudioContext(
       AudioContext(
         android: AudioContextAndroid(
@@ -23,9 +24,21 @@ class ButtonSoundService {
     await _player.setVolume(0.1);
   }
 
+  static Future<void> setEnabled(bool enabled) async {
+    _enabled = enabled;
+
+    if (!enabled) {
+      await _player.stop();
+    }
+  }
+
   static Future<void> play() async {
+    if (!_enabled) return;
+
     try {
       await _player.stop();
+
+      if (!_enabled) return;
 
       await _player.play(
         AssetSource('sounds/tombi_button_pop.mp3'),

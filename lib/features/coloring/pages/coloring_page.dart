@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
@@ -7,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
 import '../../../core/widgets/tombi_loading.dart';
 import '../../../core/services/button_sound_service.dart';
+import '../../../core/services/rate_popup_service.dart';
 
 import '../data/coloring_palettes.dart';
 import '../widgets/coloring_actions.dart';
@@ -28,10 +28,8 @@ class ColoringPageScreen extends StatefulWidget {
       _ColoringPageScreenState();
 }
 
-class _ColoringPageScreenState
-    extends State<ColoringPageScreen> {
-  final ColoringController _controller =
-  ColoringController();
+class _ColoringPageScreenState extends State<ColoringPageScreen> {
+  final ColoringController _controller = ColoringController();
 
   final GlobalKey<ColoringCanvasState> _canvasKey =
   GlobalKey<ColoringCanvasState>();
@@ -41,12 +39,7 @@ class _ColoringPageScreenState
   @override
   void initState() {
     super.initState();
-
     _controller.addListener(_onControllerChanged);
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
   }
 
   void _onControllerChanged() {
@@ -57,13 +50,8 @@ class _ColoringPageScreenState
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
-
     super.dispose();
   }
 
@@ -99,13 +87,10 @@ class _ColoringPageScreenState
                     color: Color(0xFF704B36),
                   ),
                 ),
-
                 const SizedBox(height: 26),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // X - İptal
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -129,10 +114,7 @@ class _ColoringPageScreenState
                         ),
                       ),
                     ),
-
                     const SizedBox(width: 20),
-
-                    // Tik - Sıfırla
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
@@ -145,7 +127,7 @@ class _ColoringPageScreenState
                           color: const Color(0xFFB9CB85),
                           borderRadius: BorderRadius.circular(15),
                           border: Border.all(
-                            color: const Color(0xFF704B36),
+                            color: Color(0xFF704B36),
                             width: 2,
                           ),
                         ),
@@ -186,16 +168,20 @@ class _ColoringPageScreenState
       if (!mounted) return;
 
       if (pngBytes == null) {
-        throw StateError(
-          'Coloring image is not ready.',
-        );
+        throw StateError('Coloring image is not ready.');
       }
+
+      final shouldShowRatePopup =
+      await RatePopupService.onPaintingCompleted();
+
+      if (!mounted) return;
 
       await context.push(
         AppRoutes.completion,
         extra: {
           'imagePath': widget.imagePath,
           'paintedImage': pngBytes,
+          'showRatePopup': shouldShowRatePopup,
         },
       );
     } catch (error) {
@@ -233,127 +219,121 @@ class _ColoringPageScreenState
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-      Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'assets/images/gallery/gallery_background.png',
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final canvasSize =
-                  constraints.maxWidth;
-
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Üst butonlar
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        24, 16, 24, 12,
-                      ),
-                      child: Row(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: [
-                          const CozyBackButton(),
-                          const Spacer(),
-                          ColoringActions(
-                            onDone: () {
-                              if (_isExporting) return;
-
-                              ButtonSoundService.tap(() {
-                                _completeColoring();
-                              });
-                            },
-                            onDelete: () {
-                              ButtonSoundService.tap(() {
-                                _confirmReset();
-                              });
-                            },
-                            onUndo: () {
-                              ButtonSoundService.tap(() {
-                                _canvasKey.currentState
-                                    ?.undo();
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Mevcut boyama alanı
-                    SizedBox(
-                      width: canvasSize,
-                      height: canvasSize,
-                      child: ColoringCanvas(
-                        key: _canvasKey,
-                        imagePath: widget.imagePath,
-                        selectedColor: selectedColor,
-                        selectedTool: selectedTool,
-                        brushWidth: _controller.brushWidth,
-                        eraserWidth: _controller.eraserWidth,
-                        onColorPicked: (color) {
-                          _controller.selectPickedColor(
-                            color,
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Araçlar, slider ve paletler
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        24, 0, 24, 24,
-                      ),
-                      child: ColoringSidebar(
-                        palette: palette,
-                        paletteId: paletteId,
-                        selectedColor: selectedColor,
-                        selectedTool: selectedTool,
-                        brushWidth: _controller.brushWidth,
-                        eraserWidth: _controller.eraserWidth,
-
-                        onBrushWidthChanged: (width) {
-                          _controller.setBrushWidth(width);
-                        },
-
-                        onEraserWidthChanged: (width) {
-                          _controller.setEraserWidth(width);
-                        },
-
-                        onToolSelected: (tool) {
-                          ButtonSoundService.tap(() {
-                            _controller.selectTool(tool);
-                          });
-                        },
-
-                        onPaletteSelected: (id) {
-                          ButtonSoundService.tap(() {
-                            _controller.selectPalette(id);
-                          });
-                        },
-
-                        onColorSelected: (color) {
-                          ButtonSoundService.tap(() {
-                            _controller.selectColor(color);
-                          });
-                        },
-                      ),
-                    ),
-                  ],
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/gallery/gallery_background.png',
                 ),
-              );
-            },
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          24, 16, 24, 12,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const CozyBackButton(),
+                            const Spacer(),
+                            ColoringActions(
+                              onDone: () {
+                                if (_isExporting) return;
+
+                                ButtonSoundService.tap(() {
+                                  _completeColoring();
+                                });
+                              },
+                              onDelete: () {
+                                ButtonSoundService.tap(() {
+                                  _confirmReset();
+                                });
+                              },
+                              onUndo: () {
+                                ButtonSoundService.tap(() {
+                                  _canvasKey.currentState?.undo();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, canvasConstraints) {
+                            final canvasSize =
+                            canvasConstraints.maxWidth <
+                                canvasConstraints.maxHeight
+                                ? canvasConstraints.maxWidth
+                                : canvasConstraints.maxHeight;
+
+                            return Center(
+                              child: SizedBox(
+                                width: canvasSize,
+                                height: canvasSize,
+                                child: ColoringCanvas(
+                                  key: _canvasKey,
+                                  imagePath: widget.imagePath,
+                                  selectedColor: selectedColor,
+                                  selectedTool: selectedTool,
+                                  brushWidth: _controller.brushWidth,
+                                  eraserWidth: _controller.eraserWidth,
+                                  onColorPicked: (color) {
+                                    _controller.selectPickedColor(color);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          24, 0, 24, 8,
+                        ),
+                        child: ColoringSidebar(
+                          palette: palette,
+                          paletteId: paletteId,
+                          selectedColor: selectedColor,
+                          selectedTool: selectedTool,
+                          brushWidth: _controller.brushWidth,
+                          eraserWidth: _controller.eraserWidth,
+                          onBrushWidthChanged: (width) {
+                            _controller.setBrushWidth(width);
+                          },
+                          onEraserWidthChanged: (width) {
+                            _controller.setEraserWidth(width);
+                          },
+                          onToolSelected: (tool) {
+                            ButtonSoundService.tap(() {
+                              _controller.selectTool(tool);
+                            });
+                          },
+                          onPaletteSelected: (id) {
+                            ButtonSoundService.tap(() {
+                              _controller.selectPalette(id);
+                            });
+                          },
+                          onColorSelected: (color) {
+                            ButtonSoundService.tap(() {
+                              _controller.selectColor(color);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
           if (_isExporting)
             const Positioned.fill(
               child: TombiLoading(),

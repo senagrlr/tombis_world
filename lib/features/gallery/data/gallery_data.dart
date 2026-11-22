@@ -10,14 +10,17 @@ abstract final class GalleryData {
     required String title,
     required String thumbnail,
     required String svgPath,
+    bool isRewarded = false,
   }) {
     return ColoringPage(
       id: id,
       title: title,
       thumbnailPath: '$thumbnailFolder$thumbnail',
       imagePath: svgPath,
+      isRewarded: isRewarded,
     );
   }
+
 
   static final List<ColoringPage> pages = [
     item(
@@ -31,6 +34,7 @@ abstract final class GalleryData {
       title: 'Sakura',
       thumbnail: 'sakura.png',
       svgPath: 'assets/images/coloring/sakura.svg',
+      isRewarded: true,
     ),
     item(
       id: 'painter',
