@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
+import '../../../core/widgets/tombi_loading.dart';
 import '../../../core/services/button_sound_service.dart';
 
 import '../data/coloring_palettes.dart';
@@ -12,6 +13,7 @@ import '../widgets/coloring_actions.dart';
 import '../widgets/coloring_canvas.dart';
 import '../widgets/coloring_sidebar.dart';
 import '../controller/coloring_controller.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ColoringPageScreen extends StatefulWidget {
   final String imagePath;
@@ -88,10 +90,10 @@ class _ColoringPageScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Reset Coloring?',
+                Text(
+                  AppLocalizations.of(dialogContext).resetColoringTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF704B36),
@@ -202,9 +204,9 @@ class _ColoringPageScreenState
       debugPrint('Coloring export error: $error');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Could not finish coloring. Please try again.',
+            AppLocalizations.of(context).finishColoringError,
           ),
         ),
       );
@@ -229,7 +231,9 @@ class _ColoringPageScreenState
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Container(
+      body: Stack(
+        children: [
+      Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
@@ -349,6 +353,12 @@ class _ColoringPageScreenState
             },
           ),
         ),
+      ),
+          if (_isExporting)
+            const Positioned.fill(
+              child: TombiLoading(),
+            ),
+        ],
       ),
     );
   }

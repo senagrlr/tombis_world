@@ -16,7 +16,7 @@ class CozyBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Go back',
+      label: MaterialLocalizations.of(context).backButtonTooltip,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {

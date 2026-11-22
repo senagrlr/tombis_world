@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
 
@@ -34,14 +36,14 @@ class SettingsHeader extends StatelessWidget {
             ),
           ),
 
-          const Positioned(
+          Positioned(
             top: 82,
             left: 0,
             right: 0,
             child: Text(
-              'Settings',
+              AppLocalizations.of(context).settings,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w900,
                 color: AppColors.brown,

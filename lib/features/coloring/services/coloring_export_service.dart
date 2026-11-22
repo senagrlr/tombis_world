@@ -28,6 +28,11 @@ class ColoringExportService {
     final width = (document.size.width * scale).ceil();
     final height = (document.size.height * scale).ceil();
 
+    debugPrint(
+      'PNG BOYUTU: ${width}x$height '
+          '(${width * height} piksel)',
+    );
+
     final exportSize = Size(
       width.toDouble(),
       height.toDouble(),

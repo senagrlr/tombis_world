@@ -12,6 +12,7 @@ import '../services/artwork_share_service.dart';
 import '../widgets/completed_artwork.dart';
 import '../widgets/completion_actions.dart';
 import '../widgets/completion_confetti.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CompletionPage extends StatefulWidget {
   final String imagePath;
@@ -44,7 +45,7 @@ class _CompletionPageState extends State<CompletionPage> {
     final pngBytes = widget.paintedImage;
 
     if (pngBytes == null || pngBytes.isEmpty) {
-      _showMessage('No image available to save.');
+      _showMessage(AppLocalizations.of(context).noImageToSave);
       return;
     }
 
@@ -57,7 +58,7 @@ class _CompletionPageState extends State<CompletionPage> {
 
       if (!mounted) return;
 
-      _showMessage('Image saved to gallery!');
+      _showMessage(AppLocalizations.of(context).imageSaved);
     } catch (error, stackTrace) {
       debugPrint('Artwork save error: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -65,7 +66,7 @@ class _CompletionPageState extends State<CompletionPage> {
       if (!mounted) return;
 
       _showMessage(
-        'Could not save image. Please try again.',
+        AppLocalizations.of(context).saveImageError,
       );
     } finally {
       if (mounted) {
@@ -82,7 +83,7 @@ class _CompletionPageState extends State<CompletionPage> {
     final pngBytes = widget.paintedImage;
 
     if (pngBytes == null || pngBytes.isEmpty) {
-      _showMessage('No image available to share.');
+      _showMessage(AppLocalizations.of(context).noImageToShare);
       return;
     }
 
@@ -91,7 +92,10 @@ class _CompletionPageState extends State<CompletionPage> {
     });
 
     try {
-      await _shareService.shareArtwork(pngBytes);
+      await _shareService.shareArtwork(
+        pngBytes,
+        text: AppLocalizations.of(context).shareArtworkText,
+      );
     } catch (error, stackTrace) {
       debugPrint('Artwork share error: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -99,7 +103,7 @@ class _CompletionPageState extends State<CompletionPage> {
       if (!mounted) return;
 
       _showMessage(
-        'Could not share image. Please try again.',
+        AppLocalizations.of(context).shareImageError,
       );
     } finally {
       if (mounted) {

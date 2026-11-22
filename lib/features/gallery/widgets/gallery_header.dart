@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import '../../../core/widgets/cozy_back_button.dart';
+import '../../../l10n/app_localizations.dart';
 
 class GalleryHeader extends StatelessWidget {
   const GalleryHeader({super.key});
@@ -18,10 +20,10 @@ class GalleryHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          const Text(
-            'Tombi’s\nAdventures',
+          Text(
+            AppLocalizations.of(context).galleryTitle,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 36,
               height: 1.1,
               fontWeight: FontWeight.w900,

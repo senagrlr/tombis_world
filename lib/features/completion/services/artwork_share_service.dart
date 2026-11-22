@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 class ArtworkShareService {
   const ArtworkShareService();
 
-  Future<void> shareArtwork(Uint8List pngBytes) async {
+  Future<void> shareArtwork(Uint8List pngBytes, {required String text,}) async {
     if (pngBytes.isEmpty) {
       throw ArgumentError('PNG data cannot be empty.');
     }
@@ -22,6 +22,7 @@ class ArtworkShareService {
       ShareParams(
         files: [file],
         fileNameOverrides: ['tombili_coloring.png'],
+        text: text,
       ),
     );
   }

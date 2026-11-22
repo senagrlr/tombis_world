@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../models/coloring_tool.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ColoringTools extends StatelessWidget {
   final ColoringTool selected;
@@ -15,11 +16,13 @@ class ColoringTools extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tools = [
-      (ColoringTool.brush, AssetPaths.brushTool, 'Brush'),
-      (ColoringTool.fill, AssetPaths.fillTool, 'Fill'),
-      (ColoringTool.eraser, AssetPaths.eraserTool, 'Eraser'),
-      (ColoringTool.picker, AssetPaths.pickerTool, 'Picker'),
+    final l10n = AppLocalizations.of(context);
+
+    final tools = [
+      (ColoringTool.brush, AssetPaths.brushTool, l10n.brush),
+      (ColoringTool.fill, AssetPaths.fillTool, l10n.fill),
+      (ColoringTool.eraser, AssetPaths.eraserTool, l10n.eraser),
+      (ColoringTool.picker, AssetPaths.pickerTool, l10n.picker),
     ];
 
     return Container(

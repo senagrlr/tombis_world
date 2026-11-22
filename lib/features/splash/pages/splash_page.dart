@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/services/background_music_service.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -36,11 +37,8 @@ class _SplashPageState extends State<SplashPage>
 
     _navigated = true;
 
-    // Animasyon bittiğinde müziği bir kez başlat.
-    // Sayfa geçişlerinde müzik yeniden başlamaz.
     BackgroundMusicService.start();
 
-    // Home sayfasına geç.
     context.go(AppRoutes.home);
   }
 
@@ -68,7 +66,7 @@ class _SplashPageState extends State<SplashPage>
               ..forward();
           },
           errorBuilder: (context, error, stackTrace) {
-            return const Text('Animasyon yüklenemedi');
+            return Text(AppLocalizations.of(context).splashLoadError);
           },
         ),
       ),
