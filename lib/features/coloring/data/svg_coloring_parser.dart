@@ -55,6 +55,8 @@ class SvgColoringParser {
 
     final regions = <SvgColorRegion>[];
     final outline = Path();
+    final strokePaths = <Path>[];
+    final strokeWidths = <double>[];
     final usedIds = <String>{};
 
     var outlineCount = 0;
@@ -98,6 +100,23 @@ class SvgColoringParser {
       } else if (_isBlack(fill)) {
         outline.addPath(path, Offset.zero);
         outlineCount++;
+      } else if (fill == 'none') {
+        final stroke = _readStyleValue(element, style, 'stroke');
+        final strokeWidthText =
+        _readStyleValue(element, style, 'stroke-width');
+
+        if (!_isBlack(stroke)) {
+          throw FormatException(
+            'Desteklenmeyen çizgi rengi: $id ($stroke)',
+          );
+        }
+
+        final strokeWidth =
+            double.tryParse(strokeWidthText) ?? 1.0;
+
+        strokePaths.add(path);
+        strokeWidths.add(strokeWidth);
+        outlineCount++;
       } else {
         throw FormatException(
           'Desteklenmeyen path rengi: $id ($fill)',
@@ -115,6 +134,8 @@ class SvgColoringParser {
       size: size,
       regions: regions,
       outline: outline,
+      strokePaths: strokePaths,
+      strokeWidths: strokeWidths,
     );
   }
 
@@ -145,5 +166,23 @@ class SvgColoringParser {
     return fill == '#000000' ||
         fill == '#000' ||
         fill == 'black';
+  }
+
+  String _readStyleValue(
+      XmlElement element,
+      String style,
+      String property,
+      ) {
+    final directValue = element.getAttribute(property);
+
+    if (directValue != null) {
+      return directValue.trim().toLowerCase();
+    }
+
+    final match = RegExp(
+      '(?:^|;)\\s*${RegExp.escape(property)}\\s*:\\s*([^;]+)',
+    ).firstMatch(style);
+
+    return match?.group(1)?.trim().toLowerCase() ?? '';
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../models/color_palette.dart';
+import '../../../l10n/app_localizations.dart';
 
 class PaletteSelector extends StatelessWidget {
   final List<ColorPalette> palettes;
@@ -16,6 +17,8 @@ class PaletteSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return SizedBox(
       height: 34,
       child: ListView.separated(
@@ -45,7 +48,14 @@ class PaletteSelector extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  palette.name,
+                  switch (palette.id) {
+                    'pastel' => l10n.palettePastel,
+                    'nature' => l10n.paletteNature,
+                    'tombi' => l10n.paletteTombi,
+                    'candy' => l10n.paletteCandy,
+                    'dreamy' => l10n.paletteDreamy,
+                    _ => palette.name,
+                  },
                   style: const TextStyle(
                     color: AppColors.darkBrown,
                     fontSize: 11,

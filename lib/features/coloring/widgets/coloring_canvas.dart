@@ -10,6 +10,7 @@ import 'coloring_paint_painter.dart';
 import 'svg_outline_painter.dart';
 import '../services/coloring_export_service.dart';
 import '../models/coloring_tool.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ColoringCanvas extends StatefulWidget {
   final String imagePath;
@@ -80,7 +81,7 @@ class ColoringCanvasState extends State<ColoringCanvas> {
     return exportService.exportPng(
       document: document,
       operations: _session.operations,
-      scale: 1.5,
+      scale: 3072 / document.size.longestSide,
     );
   }
 
@@ -187,7 +188,9 @@ class ColoringCanvasState extends State<ColoringCanvas> {
     if (_session.error != null) {
       return Center(
         child: Text(
-          'SVG yüklenemedi:\n${_session.error}',
+          AppLocalizations.of(context).svgLoadError(
+            _session.error.toString(),
+          ),
           textAlign: TextAlign.center,
         ),
       );

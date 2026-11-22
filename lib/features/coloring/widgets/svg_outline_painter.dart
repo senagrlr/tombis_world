@@ -25,6 +25,18 @@ class SvgOutlinePainter extends CustomPainter {
 
     canvas.drawPath(document.outline, paint);
 
+    for (var i = 0; i < document.strokePaths.length; i++) {
+      final strokePaint = Paint()
+        ..color = Colors.black
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = document.strokeWidths[i]
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..isAntiAlias = true;
+
+      canvas.drawPath(document.strokePaths[i], strokePaint);
+    }
+
     canvas.restore();
   }
 

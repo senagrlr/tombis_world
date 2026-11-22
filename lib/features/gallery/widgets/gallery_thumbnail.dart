@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/coloring_page.dart';
+import '../../../l10n/app_localizations.dart';
 
 class GalleryThumbnail extends StatelessWidget {
   final ColoringPage page;
@@ -11,17 +12,14 @@ class GalleryThumbnail extends StatelessWidget {
     required this.onTap,
   });
 
-  // Thumbnail'ın mevcut yatay kırpma miktarı.
   static const double horizontalTrim = 16;
 
-  // Kart sağdan ve soldan 5'er piksel daralacak.
   static const double cardInset = 5;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, cardConstraints) {
-        // Kart daralmadan önceki kullanılabilir thumbnail genişliği.
         final originalThumbnailWidth =
             cardConstraints.maxWidth - 24;
 
@@ -111,7 +109,7 @@ class GalleryThumbnail extends StatelessWidget {
                     ),
                     const SizedBox(height: 9),
                     Text(
-                      page.title,
+                      _localizedTitle(context, page.id),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
@@ -131,3 +129,32 @@ class GalleryThumbnail extends StatelessWidget {
     );
   }
 }
+
+String _localizedTitle(BuildContext context, String id) {
+  final l10n = AppLocalizations.of(context);
+
+  return switch (id) {
+    'farmer' => l10n.galleryFarmer,
+    'sakura' => l10n.gallerySakura,
+    'painter' => l10n.galleryPainter,
+    'garden' => l10n.galleryGarden,
+    'winter' => l10n.galleryWinter,
+    'summer' => l10n.gallerySummer,
+    'spring' => l10n.gallerySpring,
+    'amusument_park' => l10n.galleryAmusumentPark,
+    'chef' => l10n.galleryChef,
+    'halloween' => l10n.galleryHalloween,
+    'tailor' => l10n.galleryTailor,
+    'skater' => l10n.gallerySkater,
+    'school' => l10n.gallerySchool,
+    'newyear_eve' => l10n.galleryNewyearEve,
+    'ice_cream' => l10n.galleryIceCream,
+    'gym' => l10n.galleryGym,
+    'flower_shop' => l10n.galleryFlowerShop,
+    'bed_time' => l10n.galleryBedTime,
+    'astronaut' => l10n.galleryAstronaut,
+    'aquarium' => l10n.galleryAquarium,
+    _ => id,
+  };
+}
+
