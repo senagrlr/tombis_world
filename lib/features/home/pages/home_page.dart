@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/services/button_sound_service.dart';
+import '../../../core/services/notification_service.dart';
 
 import '../widgets/home_background.dart';
 import '../widgets/home_logo.dart';

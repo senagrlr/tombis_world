@@ -33,28 +33,22 @@ class ColoringActions extends StatelessWidget {
       );
     }
 
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            actionButton(
-              AssetPaths.deleteButton,
-              onDelete,
-            ),
-            const SizedBox(width: 6),
-            actionButton(
-              AssetPaths.doneButton,
-              onDone,
-            ),
-          ],
+        actionButton(
+          AssetPaths.deleteButton,
+          onDelete,
         ),
-        const SizedBox(height: 3),
+        const SizedBox(width: 6),
         actionButton(
           AssetPaths.undoButton,
           onUndo,
+        ),
+        const SizedBox(width: 6),
+        actionButton(
+          AssetPaths.doneButton,
+          onDone,
         ),
       ],
     );

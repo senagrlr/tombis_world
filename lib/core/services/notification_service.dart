@@ -1,17 +1,19 @@
+
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter/foundation.dart';
 
 import '../notifications/notification_messages.dart';
 
 class NotificationService {
   NotificationService._();
 
-  static final NotificationService instance = NotificationService._();
+  static final NotificationService instance =
+  NotificationService._();
 
   final FlutterLocalNotificationsPlugin _notifications =
   FlutterLocalNotificationsPlugin();
@@ -46,8 +48,10 @@ class NotificationService {
       tz.setLocalLocation(tz.getLocation('Etc/UTC'));
     }
 
-    const androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Small Notification Icon
+    const androidSettings = AndroidInitializationSettings(
+      'tombi_notification_small',
+    );
 
     const settings = InitializationSettings(
       android: androidSettings,
@@ -57,10 +61,12 @@ class NotificationService {
   }
 
   Future<bool> requestPermission() async {
-    final android = _notifications.resolvePlatformSpecificImplementation<
+    final android =
+    _notifications.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
 
-    return await android?.requestNotificationsPermission() ?? false;
+    return await android?.requestNotificationsPermission() ??
+        false;
   }
 
   Future<bool> hasPermission() async {
@@ -73,7 +79,9 @@ class NotificationService {
 
   Future<void> cancelDailyNotifications() async {
     for (int i = 0; i < _scheduledDays; i++) {
-      await _notifications.cancel(id: _notificationIdStart + i);
+      await _notifications.cancel(
+        id: _notificationIdStart + i,
+      );
     }
   }
 
@@ -83,7 +91,8 @@ class NotificationService {
     if (!await hasPermission()) return;
 
     final random = Random();
-    final messages = List<String>.from(NotificationMessages.messages)
+    final messages =
+    List<String>.from(NotificationMessages.messages)
       ..shuffle(random);
 
     final now = tz.TZDateTime.now(tz.local);
@@ -112,7 +121,9 @@ class NotificationService {
         messages.shuffle(random);
 
         if (messages.first == previous) {
-          final swapIndex = 1 + random.nextInt(messages.length - 1);
+          final swapIndex =
+              1 + random.nextInt(messages.length - 1);
+
           final temp = messages.first;
           messages[0] = messages[swapIndex];
           messages[swapIndex] = temp;
@@ -136,9 +147,18 @@ class NotificationService {
           android: AndroidNotificationDetails(
             'tombi_daily_notifications',
             'Daily Tombi Notifications',
-            channelDescription: 'Daily coloring reminders from Tombi',
+            channelDescription:
+            'Daily coloring reminders from Tombi',
             importance: Importance.defaultImportance,
             priority: Priority.defaultPriority,
+
+            // Small Icon: Beyaz Tombi silüeti
+            icon: 'tombi_notification_small',
+
+            // Large Icon: Uygulamanın mevcut logosu
+            largeIcon: DrawableResourceAndroidBitmap(
+              '@mipmap/ic_launcher',
+            ),
           ),
         ),
         androidScheduleMode:
@@ -146,4 +166,5 @@ class NotificationService {
       );
     }
   }
+
 }

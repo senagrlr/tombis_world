@@ -2,26 +2,32 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
+import '../../../core/services/rate_popup_service.dart';
+import '../../../l10n/app_localizations.dart';
+
+import '../../settings/widgets/rate_popup_dialog.dart';
 
 import '../services/artwork_storage_service.dart';
 import '../services/artwork_share_service.dart';
 import '../widgets/completed_artwork.dart';
 import '../widgets/completion_actions.dart';
 import '../widgets/completion_confetti.dart';
-import '../../../l10n/app_localizations.dart';
 
 class CompletionPage extends StatefulWidget {
   final String imagePath;
   final Uint8List? paintedImage;
+  final bool showRatePopup;
 
   const CompletionPage({
     super.key,
     required this.imagePath,
     this.paintedImage,
+    this.showRatePopup = false,
   });
 
   @override
@@ -38,14 +44,89 @@ class _CompletionPageState extends State<CompletionPage> {
 
   bool _isSaving = false;
   bool _isSharing = false;
+  bool _isOpeningStore = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.showRatePopup) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showRatePopup();
+      });
+    }
+  }
+
+  // Rate Us pop-up
+  Future<void> _showRatePopup() async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (dialogContext) {
+        return RatePopupDialog(
+          onYes: () async {
+            if (_isOpeningStore) return;
+
+            _isOpeningStore = true;
+
+            try {
+              final opened = await _openPlayStore();
+
+              if (!opened) {
+                if (mounted) {
+                  _showMessage(
+                    'Google Play Store could not be opened.',
+                  );
+                }
+                return;
+              }
+
+              // Mağaza başarıyla açıldıysa
+              // değerlendirme isteğini tekrar gösterme.
+              await RatePopupService.markAccepted();
+
+              if (!dialogContext.mounted) return;
+
+              Navigator.of(dialogContext).pop();
+            } finally {
+              _isOpeningStore = false;
+            }
+          },
+        );
+      },
+    );
+  }
+
+  // Yeşil tik butonunun açacağı Google Play sayfası
+  Future<bool> _openPlayStore() async {
+    final uri = Uri.parse(
+      'https://play.google.com/store/apps/details'
+          '?id=com.tombisworld.tombis_world',
+    );
+
+    try {
+      return await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (error) {
+      debugPrint('Google Play Store error: $error');
+      return false;
+    }
+  }
+
+  // Boyamayı galeriye kaydet
   Future<void> _downloadArtwork() async {
     if (_isSaving || _isSharing) return;
 
     final pngBytes = widget.paintedImage;
 
     if (pngBytes == null || pngBytes.isEmpty) {
-      _showMessage(AppLocalizations.of(context).noImageToSave);
+      _showMessage(
+        AppLocalizations.of(context).noImageToSave,
+      );
       return;
     }
 
@@ -58,7 +139,9 @@ class _CompletionPageState extends State<CompletionPage> {
 
       if (!mounted) return;
 
-      _showMessage(AppLocalizations.of(context).imageSaved);
+      _showMessage(
+        AppLocalizations.of(context).imageSaved,
+      );
     } catch (error, stackTrace) {
       debugPrint('Artwork save error: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -77,13 +160,16 @@ class _CompletionPageState extends State<CompletionPage> {
     }
   }
 
+  // Boyamayı paylaş
   Future<void> _shareArtwork() async {
     if (_isSharing || _isSaving) return;
 
     final pngBytes = widget.paintedImage;
 
     if (pngBytes == null || pngBytes.isEmpty) {
-      _showMessage(AppLocalizations.of(context).noImageToShare);
+      _showMessage(
+        AppLocalizations.of(context).noImageToShare,
+      );
       return;
     }
 
@@ -94,7 +180,8 @@ class _CompletionPageState extends State<CompletionPage> {
     try {
       await _shareService.shareArtwork(
         pngBytes,
-        text: AppLocalizations.of(context).shareArtworkText,
+        text: AppLocalizations.of(context)
+            .shareArtworkText,
       );
     } catch (error, stackTrace) {
       debugPrint('Artwork share error: $error');
@@ -114,7 +201,10 @@ class _CompletionPageState extends State<CompletionPage> {
     }
   }
 
+  // Bilgilendirme mesajı
   void _showMessage(String message) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -140,12 +230,14 @@ class _CompletionPageState extends State<CompletionPage> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final artworkSize =
-              (constraints.maxWidth - 24)
-                  .clamp(0.0, constraints.maxHeight * 0.75);
+              (constraints.maxWidth - 24).clamp(
+                0.0,
+                constraints.maxHeight * 0.75,
+              );
 
               return Stack(
                 children: [
-                  // Tamamlanan görsel
+                  // Tamamlanan boyama
                   Center(
                     child: SizedBox(
                       width: artworkSize,
@@ -193,7 +285,7 @@ class _CompletionPageState extends State<CompletionPage> {
                     ),
                   ),
 
-                  // Konfeti - aynen korundu
+                  // Konfeti
                   const Positioned.fill(
                     child: IgnorePointer(
                       child: CompletionConfetti(),

@@ -1,6 +1,6 @@
-import 'package:go_router/go_router.dart';
-
 import 'dart:typed_data';
+
+import 'package:go_router/go_router.dart';
 
 import '../features/splash/pages/splash_page.dart';
 import '../features/home/pages/home_page.dart';
@@ -55,7 +55,10 @@ final appRouter = GoRouter(
         if (extra is Map<String, dynamic>) {
           return CompletionPage(
             imagePath: extra['imagePath'] as String,
-            paintedImage: extra['paintedImage'] as Uint8List?,
+            paintedImage:
+            extra['paintedImage'] as Uint8List?,
+            showRatePopup:
+            extra['showRatePopup'] as bool? ?? false,
           );
         }
 

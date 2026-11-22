@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
@@ -16,24 +15,27 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<GalleryPage> {
-  @override
-  void initState() {
-    super.initState();
+  static const AssetImage _backgroundImage = AssetImage(
+    'assets/images/gallery/gallery_background.png',
+  );
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Galeri arka planını önceden belleğe al.
+    precacheImage(_backgroundImage, context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-              'assets/images/gallery/gallery_background.png',
-            ),
+            image: _backgroundImage,
             fit: BoxFit.cover,
           ),
         ),

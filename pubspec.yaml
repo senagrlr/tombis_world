@@ -87,6 +87,8 @@ flutter:
     - assets/images/coloring/
     - assets/images/coloring_ui/
     - assets/images/completion_ui/
+    - assets/images/rate_popup/
+    - assets/images/settings/
     - assets/animations/
     - assets/images/splash/
     - assets/sounds/

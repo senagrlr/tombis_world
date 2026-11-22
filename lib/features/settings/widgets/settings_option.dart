@@ -1,10 +1,12 @@
+
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import 'cozy_toggle.dart';
 
 class SettingsOption extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final String iconPath;
   final bool? value;
   final ValueChanged<bool>? onChanged;
   final VoidCallback? onTap;
@@ -12,7 +14,7 @@ class SettingsOption extends StatelessWidget {
   const SettingsOption({
     super.key,
     required this.title,
-    required this.icon,
+    required this.iconPath,
     this.value,
     this.onChanged,
     this.onTap,
@@ -21,11 +23,19 @@ class SettingsOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: 58,
       child: Row(
         children: [
-          Icon(icon, size: 25, color: AppColors.brown),
-          const SizedBox(width: 14),
+          // PNG ikon - ekstra stroke veya gölge yok.
+          Image.asset(
+            iconPath,
+            width: 32,
+            height: 32,
+            fit: BoxFit.contain,
+          ),
+
+          const SizedBox(width: 8),
+
           Expanded(
             child: Text(
               title,
@@ -36,12 +46,18 @@ class SettingsOption extends StatelessWidget {
               ),
             ),
           ),
+
           if (value != null && onChanged != null)
-            CozyToggle(value: value!, onChanged: onChanged!)
+            CozyToggle(
+              value: value!,
+              onChanged: onChanged!,
+            )
           else
             IconButton(
               onPressed: onTap,
-              icon: const Icon(Icons.arrow_forward_rounded),
+              icon: const Icon(
+                Icons.arrow_forward_rounded,
+              ),
               color: AppColors.darkBrown,
             ),
         ],
