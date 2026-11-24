@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../constants/asset_paths.dart';
+
 class BackgroundMusicService {
   BackgroundMusicService._();
 
@@ -28,7 +30,7 @@ class BackgroundMusicService {
       if (!_enabled) return;
 
       await _player.play(
-        AssetSource('sounds/tombi_cozy_background.wav'),
+        AssetSource(AssetPaths.backgroundMusic),
       );
 
       _started = true;
@@ -40,7 +42,6 @@ class BackgroundMusicService {
 
   static Future<void> pause() async {
     if (!_started) return;
-
     await _player.pause();
   }
 

@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/background_music_service.dart';
 import '../../../core/services/button_sound_service.dart';
 import '../models/settings_state.dart';
+import '../models/setting_key.dart';
+import '../repositories/settings_repository.dart';
 
 final settingsProvider =
 AsyncNotifierProvider<SettingsController, SettingsState>(
@@ -14,13 +15,9 @@ AsyncNotifierProvider<SettingsController, SettingsState>(
 class SettingsController extends AsyncNotifier<SettingsState> {
   @override
   Future<SettingsState> build() async {
-    final prefs = await SharedPreferences.getInstance();
+    final repository = ref.watch(settingsRepositoryProvider);
 
-    var settings = SettingsState(
-      music: prefs.getBool('music') ?? true,
-      sound: prefs.getBool('sound') ?? true,
-      notification: prefs.getBool('notification') ?? false,
-    );
+    var settings = await repository.loadSettings();
 
     // Kayıtlı ses ayarlarını uygula.
     await ButtonSoundService.setEnabled(settings.sound);
@@ -33,7 +30,10 @@ class SettingsController extends AsyncNotifier<SettingsState> {
       if (!hasPermission) {
         settings = settings.copyWith(notification: false);
 
-        await prefs.setBool('notification', false);
+        await repository.saveSetting(
+          SettingKey.notification,
+          false,
+        );
 
         await NotificationService.instance
             .cancelDailyNotifications();
@@ -43,15 +43,16 @@ class SettingsController extends AsyncNotifier<SettingsState> {
     return settings;
   }
 
-  Future<void> updateSetting(String key, bool value) async {
+  Future<void> updateSetting(SettingKey key, bool value) async {
     final current = state.asData?.value;
 
-    if (current == null ||
-        !const ['music', 'sound', 'notification'].contains(key)) {
+    if (current == null) {
       return;
     }
 
-    if (key == 'notification') {
+    final repository = ref.read(settingsRepositoryProvider);
+
+    if (key == SettingKey.notification) {
       final notificationService = NotificationService.instance;
 
       if (value) {
@@ -68,8 +69,11 @@ class SettingsController extends AsyncNotifier<SettingsState> {
             current.copyWith(notification: false),
           );
 
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('notification', false);
+          await repository.saveSetting(
+            SettingKey.notification,
+            false,
+          );
+
           return;
         }
 
@@ -80,25 +84,24 @@ class SettingsController extends AsyncNotifier<SettingsState> {
     }
 
     // Music ayarı
-    if (key == 'music') {
+    if (key == SettingKey.music) {
       await BackgroundMusicService.setEnabled(value);
     }
 
     // Sound ayarı
-    if (key == 'sound') {
+    if (key == SettingKey.sound) {
       await ButtonSoundService.setEnabled(value);
     }
 
     final updated = switch (key) {
-      'music' => current.copyWith(music: value),
-      'sound' => current.copyWith(sound: value),
-      'notification' => current.copyWith(notification: value),
-      _ => current,
+      SettingKey.music => current.copyWith(music: value),
+      SettingKey.sound => current.copyWith(sound: value),
+      SettingKey.notification =>
+          current.copyWith(notification: value),
     };
 
     state = AsyncData(updated);
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, value);
+    await repository.saveSetting(key, value);
   }
 }

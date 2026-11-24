@@ -85,9 +85,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get splashLoadError => 'Não foi possível carregar a animação.';
 
   @override
-  String svgLoadError(String error) {
-    return 'Não foi possível carregar o SVG:\n$error';
-  }
+  String get svgLoadError =>
+      'Não foi possível carregar a imagem. Tenta novamente.';
+
+  @override
+  String get retryButton => 'Tentar novamente';
 
   @override
   String get shareArtworkText => 'Pintei este desenho no Mundo do Tombi! 🎨💖';
@@ -237,6 +239,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get notificationMessage20 =>
       'Vamos deixar o mundo ainda mais colorido! 🌈';
+
+  @override
+  String get leaveColoringTitle => 'Sair da pintura?';
+
+  @override
+  String get leaveColoringMessage =>
+      'O teu progresso será perdido. Tens a certeza de que queres sair?';
 
   @override
   String get playAccessibility => 'Jogar';
@@ -322,9 +331,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get splashLoadError => 'Não foi possível carregar a animação.';
 
   @override
-  String svgLoadError(String error) {
-    return 'Não foi possível carregar o SVG:\n$error';
-  }
+  String get svgLoadError =>
+      'Não foi possível carregar a imagem. Tente novamente.';
+
+  @override
+  String get retryButton => 'Tentar novamente';
 
   @override
   String get shareArtworkText => 'Pintei este desenho no Mundo do Tombi! 🎨💖';
@@ -474,6 +485,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get notificationMessage20 =>
       'Vamos deixar o mundo ainda mais colorido! 🌈';
+
+  @override
+  String get leaveColoringTitle => 'Sair da pintura?';
+
+  @override
+  String get leaveColoringMessage =>
+      'Seu progresso será perdido. Tem certeza de que deseja sair?';
 
   @override
   String get playAccessibility => 'Jogar';

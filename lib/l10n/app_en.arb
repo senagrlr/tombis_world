@@ -25,7 +25,8 @@
 "comingSoon": "Coming soon!",
 "playStoreOpenError": "Could not open Play Store",
 "splashLoadError": "Could not load animation.",
-"svgLoadError": "Could not load SVG:\n{error}",
+"svgLoadError": "Could not load the picture. Please try again.",
+"retryButton": "Try again",
 "shareArtworkText": "I colored this picture in Tombi's World! 🎨💖",
 "notificationTitle": "Tombi's World",
 
@@ -77,13 +78,8 @@
 "notificationMessage19": "It's time to relax and color with Tombi! 💕",
 "notificationMessage20": "Let's make the world a little brighter! 🌈",
 
-"playAccessibility": "Play",
+"leaveColoringTitle": "Leave coloring?",
+"leaveColoringMessage": "Your coloring progress will be lost. Are you sure you want to leave?",
 
-"@svgLoadError": {
-"placeholders": {
-"error": {
-"type": "String"
-}
-}
-}
+"playAccessibility": "Play"
 }

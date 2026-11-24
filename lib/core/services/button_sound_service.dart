@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../constants/asset_paths.dart';
+
 class ButtonSoundService {
   ButtonSoundService._();
 
@@ -41,7 +43,7 @@ class ButtonSoundService {
       if (!_enabled) return;
 
       await _player.play(
-        AssetSource('sounds/tombi_button_pop.mp3'),
+        AssetSource(AssetPaths.buttonSound),
       );
     } catch (e) {
       debugPrint('Buton sesi hatası: $e');

@@ -25,7 +25,8 @@
   "comingSoon": "Çok yakında!",
   "playStoreOpenError": "Play Store açılamadı.",
   "splashLoadError": "Animasyon yüklenemedi.",
-  "svgLoadError": "SVG yüklenemedi:\n{error}",
+  "svgLoadError": "Resim yüklenemedi. Lütfen tekrar dene.",
+  "retryButton": "Tekrar dene",
   "shareArtworkText": "Tombi'nin Dünyası'nda bu resmi ben boyadım! 🎨💖",
   "notificationTitle": "Tombi'nin Dünyası",
 
@@ -76,6 +77,9 @@
   "notificationMessage18": "Yeni bir boyama macerasına hazır mısın? 🖌️",
   "notificationMessage19": "Tombi ile biraz rahatlayıp boyama yapmaya ne dersin? 💕",
   "notificationMessage20": "Dünyayı biraz daha renklendirelim! 🌈",
+
+  "leaveColoringTitle": "Boyamadan çıkılsın mı?",
+  "leaveColoringMessage": "Boyaman kaybolacak. Çıkmak istediğine emin misin?",
 
   "playAccessibility": "Oyna"
 }

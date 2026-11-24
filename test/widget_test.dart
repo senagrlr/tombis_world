@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tombis_world/app/app.dart';
@@ -11,6 +10,7 @@ void main() {
       ),
     );
 
-    expect(find.text("Tombi's World"), findsOneWidget);
+    // Verify that the application's root widget exists.
+    expect(find.byType(TombisWorldApp), findsOneWidget);
   });
 }

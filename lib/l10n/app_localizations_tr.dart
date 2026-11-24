@@ -82,9 +82,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get splashLoadError => 'Animasyon yüklenemedi.';
 
   @override
-  String svgLoadError(String error) {
-    return 'SVG yüklenemedi:\n$error';
-  }
+  String get svgLoadError => 'Resim yüklenemedi. Lütfen tekrar dene.';
+
+  @override
+  String get retryButton => 'Tekrar dene';
 
   @override
   String get shareArtworkText =>
@@ -233,6 +234,13 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get notificationMessage20 => 'Dünyayı biraz daha renklendirelim! 🌈';
+
+  @override
+  String get leaveColoringTitle => 'Boyamadan çıkılsın mı?';
+
+  @override
+  String get leaveColoringMessage =>
+      'Boyaman kaybolacak. Çıkmak istediğine emin misin?';
 
   @override
   String get playAccessibility => 'Oyna';

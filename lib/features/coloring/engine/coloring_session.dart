@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -79,8 +78,11 @@ class ColoringSession extends ChangeNotifier {
       _eraserEngine = EraserEngine(document: document);
 
       repaint.allChanged();
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (_disposed || version != _loadVersion) return;
+
+      debugPrint('SVG loading error: $error');
+      debugPrintStack(stackTrace: stackTrace);
       _error = error.toString();
     } finally {
       if (!_disposed && version == _loadVersion) {

@@ -25,7 +25,8 @@
   "comingSoon": "¡Muy pronto!",
   "playStoreOpenError": "No se pudo abrir Play Store.",
   "splashLoadError": "No se pudo cargar la animación.",
-  "svgLoadError": "No se pudo cargar el SVG:\n{error}",
+  "svgLoadError": "No se pudo cargar la imagen. Inténtalo de nuevo.",
+  "retryButton": "Intentar de nuevo",
   "shareArtworkText": "¡He coloreado este dibujo en El mundo de Tombi! 🎨💖",
   "notificationTitle": "El mundo de Tombi",
 
@@ -76,6 +77,9 @@
   "notificationMessage18": "¿Listo para una nueva aventura coloreando? 🖌️",
   "notificationMessage19": "¿Te apetece relajarte y colorear con Tombi? 💕",
   "notificationMessage20": "¡Vamos a llenar el mundo de color! 🌈",
+
+  "leaveColoringTitle": "¿Dejar de colorear?",
+  "leaveColoringMessage": "Perderás tu progreso. ¿Seguro que quieres salir?",
 
   "playAccessibility": "Jugar"
 }

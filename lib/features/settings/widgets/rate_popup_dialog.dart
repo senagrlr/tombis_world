@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_paths.dart';
+
 class RatePopupDialog extends StatelessWidget {
   final VoidCallback onYes;
 
@@ -11,9 +13,6 @@ class RatePopupDialog extends StatelessWidget {
   static const Color _brown = Color(0xFF9D6D4D);
   static const Color _darkBrown = Color(0xFF704A35);
   static const Color _cream = Color(0xFFF9EFDF);
-
-  static const String _assets =
-      'assets/images/rate_popup/';
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +94,7 @@ class RatePopupDialog extends StatelessWidget {
 
                       // Beş yıldız tek PNG içinde.
                       Image.asset(
-                        '${_assets}rate_star.png',
+                        AssetPaths.rateStar,
                         width: 245,
                         height: 48,
                         fit: BoxFit.contain,
@@ -108,7 +107,7 @@ class RatePopupDialog extends StatelessWidget {
                 Positioned(
                   top: 0,
                   child: Image.asset(
-                    '${_assets}rate_tombi.png',
+                    AssetPaths.rateTombi,
                     width: 230,
                     height: 175,
                     fit: BoxFit.contain,
@@ -125,7 +124,7 @@ class RatePopupDialog extends StatelessWidget {
                     MainAxisAlignment.center,
                     children: [
                       _imageButton(
-                        asset: 'rate_no.png',
+                        asset: AssetPaths.rateNo,
                         onTap: () {
                           Navigator.of(context).pop();
                         },
@@ -134,7 +133,7 @@ class RatePopupDialog extends StatelessWidget {
                       const SizedBox(width: 65),
 
                       _imageButton(
-                        asset: 'rate_yes.png',
+                        asset: AssetPaths.rateYes,
                         onTap: onYes,
                       ),
                     ],
@@ -156,7 +155,7 @@ class RatePopupDialog extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Image.asset(
-        '$_assets$asset',
+        asset,
         width: 76,
         height: 76,
         fit: BoxFit.contain,

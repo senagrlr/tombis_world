@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
 import '../../../core/widgets/tombi_loading.dart';
@@ -12,6 +13,7 @@ import '../data/coloring_palettes.dart';
 import '../widgets/coloring_actions.dart';
 import '../widgets/coloring_canvas.dart';
 import '../widgets/coloring_sidebar.dart';
+import '../widgets/leave_coloring_dialog.dart';
 import '../controller/coloring_controller.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -35,6 +37,8 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
   GlobalKey<ColoringCanvasState>();
 
   bool _isExporting = false;
+  bool _isExitDialogOpen = false;
+  bool _allowExit = false;
 
   @override
   void initState() {
@@ -55,8 +59,50 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
     super.dispose();
   }
 
-  Future<void> _confirmReset() async {
-    final shouldReset = await showDialog<bool>(
+  Future<void> _handleBack() async {
+    if (_isExporting || _isExitDialogOpen || _allowExit) return;
+
+    _isExitDialogOpen = true;
+
+    try {
+      final hasChanges =
+          _canvasKey.currentState?.hasUnsavedChanges ?? false;
+
+      if (hasChanges) {
+        final shouldLeave = await showDialog<bool>(
+          context: context,
+          barrierColor: Colors.black.withValues(alpha: 0.35),
+          builder: (dialogContext) {
+            return const LeaveColoringDialog();
+          },
+        );
+
+        if (!mounted || shouldLeave != true) return;
+      }
+
+      if (!mounted) return;
+
+      setState(() => _allowExit = true);
+
+      await WidgetsBinding.instance.endOfFrame;
+
+      if (!mounted) return;
+
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go(AppRoutes.gallery);
+      }
+    } finally {
+      _isExitDialogOpen = false;
+    }
+  }
+
+  Future<bool?> _showConfirmation({
+    required String title,
+    String? message,
+  }) {
+    return showDialog<bool>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (dialogContext) {
@@ -79,7 +125,7 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  AppLocalizations.of(dialogContext).resetColoringTitle,
+                  title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 25,
@@ -87,6 +133,19 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
                     color: Color(0xFF704B36),
                   ),
                 ),
+                if (message != null) ...[
+                  const SizedBox(height: 14),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.4,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF704B36),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 26),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +186,7 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
                           color: const Color(0xFFB9CB85),
                           borderRadius: BorderRadius.circular(15),
                           border: Border.all(
-                            color: Color(0xFF704B36),
+                            color: const Color(0xFF704B36),
                             width: 2,
                           ),
                         ),
@@ -145,6 +204,12 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _confirmReset() async {
+    final shouldReset = await _showConfirmation(
+      title: AppLocalizations.of(context).resetColoringTitle,
     );
 
     if (!mounted || shouldReset != true) return;
@@ -215,130 +280,136 @@ class _ColoringPageScreenState extends State<ColoringPageScreen> {
           (item) => item.id == paletteId,
     );
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/gallery/gallery_background.png',
+    return PopScope<Object?>(
+      canPop: _allowExit,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    AssetPaths.galleryBackground,
+                  ),
+                  fit: BoxFit.cover,
                 ),
-                fit: BoxFit.cover,
               ),
-            ),
-            child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          24, 16, 24, 12,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CozyBackButton(),
-                            const Spacer(),
-                            ColoringActions(
-                              onDone: () {
-                                if (_isExporting) return;
+              child: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            24, 16, 24, 12,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CozyBackButton(onTap: _handleBack),
+                              const Spacer(),
+                              ColoringActions(
+                                onDone: () {
+                                  if (_isExporting) return;
 
-                                ButtonSoundService.tap(() {
-                                  _completeColoring();
-                                });
-                              },
-                              onDelete: () {
-                                ButtonSoundService.tap(() {
-                                  _confirmReset();
-                                });
-                              },
-                              onUndo: () {
-                                ButtonSoundService.tap(() {
-                                  _canvasKey.currentState?.undo();
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, canvasConstraints) {
-                            final canvasSize =
-                            canvasConstraints.maxWidth <
-                                canvasConstraints.maxHeight
-                                ? canvasConstraints.maxWidth
-                                : canvasConstraints.maxHeight;
-
-                            return Center(
-                              child: SizedBox(
-                                width: canvasSize,
-                                height: canvasSize,
-                                child: ColoringCanvas(
-                                  key: _canvasKey,
-                                  imagePath: widget.imagePath,
-                                  selectedColor: selectedColor,
-                                  selectedTool: selectedTool,
-                                  brushWidth: _controller.brushWidth,
-                                  eraserWidth: _controller.eraserWidth,
-                                  onColorPicked: (color) {
-                                    _controller.selectPickedColor(color);
-                                  },
-                                ),
+                                  ButtonSoundService.tap(() {
+                                    _completeColoring();
+                                  });
+                                },
+                                onDelete: () {
+                                  ButtonSoundService.tap(() {
+                                    _confirmReset();
+                                  });
+                                },
+                                onUndo: () {
+                                  ButtonSoundService.tap(() {
+                                    _canvasKey.currentState?.undo();
+                                  });
+                                },
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          24, 0, 24, 8,
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, canvasConstraints) {
+                              final canvasSize =
+                              canvasConstraints.maxWidth <
+                                  canvasConstraints.maxHeight
+                                  ? canvasConstraints.maxWidth
+                                  : canvasConstraints.maxHeight;
+
+                              return Center(
+                                child: SizedBox(
+                                  width: canvasSize,
+                                  height: canvasSize,
+                                  child: ColoringCanvas(
+                                    key: _canvasKey,
+                                    imagePath: widget.imagePath,
+                                    selectedColor: selectedColor,
+                                    selectedTool: selectedTool,
+                                    brushWidth: _controller.brushWidth,
+                                    eraserWidth: _controller.eraserWidth,
+                                    onColorPicked: (color) {
+                                      _controller.selectPickedColor(color);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                        child: ColoringSidebar(
-                          palette: palette,
-                          paletteId: paletteId,
-                          selectedColor: selectedColor,
-                          selectedTool: selectedTool,
-                          brushWidth: _controller.brushWidth,
-                          eraserWidth: _controller.eraserWidth,
-                          onBrushWidthChanged: (width) {
-                            _controller.setBrushWidth(width);
-                          },
-                          onEraserWidthChanged: (width) {
-                            _controller.setEraserWidth(width);
-                          },
-                          onToolSelected: (tool) {
-                            ButtonSoundService.tap(() {
-                              _controller.selectTool(tool);
-                            });
-                          },
-                          onPaletteSelected: (id) {
-                            ButtonSoundService.tap(() {
-                              _controller.selectPalette(id);
-                            });
-                          },
-                          onColorSelected: (color) {
-                            ButtonSoundService.tap(() {
-                              _controller.selectColor(color);
-                            });
-                          },
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            24, 0, 24, 8,
+                          ),
+                          child: ColoringSidebar(
+                            palette: palette,
+                            paletteId: paletteId,
+                            selectedColor: selectedColor,
+                            selectedTool: selectedTool,
+                            brushWidth: _controller.brushWidth,
+                            eraserWidth: _controller.eraserWidth,
+                            onBrushWidthChanged: (width) {
+                              _controller.setBrushWidth(width);
+                            },
+                            onEraserWidthChanged: (width) {
+                              _controller.setEraserWidth(width);
+                            },
+                            onToolSelected: (tool) {
+                              ButtonSoundService.tap(() {
+                                _controller.selectTool(tool);
+                              });
+                            },
+                            onPaletteSelected: (id) {
+                              ButtonSoundService.tap(() {
+                                _controller.selectPalette(id);
+                              });
+                            },
+                            onColorSelected: (color) {
+                              ButtonSoundService.tap(() {
+                                _controller.selectColor(color);
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          if (_isExporting)
-            const Positioned.fill(
-              child: TombiLoading(),
-            ),
-        ],
+            if (_isExporting)
+              const Positioned.fill(
+                child: TombiLoading(),
+              ),
+          ],
+        ),
       ),
     );
   }
