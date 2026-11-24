@@ -14,7 +14,7 @@
   "brush": "Pincel",
   "fill": "Preencher",
   "eraser": "Borracha",
-  "picker": "Conta-gotas",
+  "picker": "Pipeta",
   "resetColoringTitle": "Quer começar a pintar de novo?",
   "finishColoringError": "Não foi possível finalizar a pintura. Tente novamente.",
   "noImageToSave": "Nenhuma imagem disponível para salvar.",
@@ -26,6 +26,9 @@
   "playStoreOpenError": "Não foi possível abrir a Play Store.",
   "splashLoadError": "Não foi possível carregar a animação.",
   "svgLoadError": "Não foi possível carregar o SVG:\n{error}",
+  "adUnavailableTitle": "Ops!",
+  "adUnavailableMessage": "O anúncio não está disponível no momento. Tente novamente mais tarde!",
+  "adUnavailableOkay": "Tudo bem",
   "shareArtworkText": "Pintei este desenho no Mundo do Tombi! 🎨💖",
   "notificationTitle": "O Mundo do Tombi",
 

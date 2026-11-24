@@ -90,6 +90,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get adUnavailableTitle => '¡Ups!';
+
+  @override
+  String get adUnavailableMessage =>
+      'El anuncio no está disponible en este momento. ¡Inténtalo de nuevo más tarde!';
+
+  @override
+  String get adUnavailableOkay => 'Vale';
+
+  @override
   String get shareArtworkText =>
       '¡He coloreado este dibujo en El mundo de Tombi! 🎨💖';
 

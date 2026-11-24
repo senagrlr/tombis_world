@@ -26,6 +26,9 @@
 "playStoreOpenError": "Could not open Play Store",
 "splashLoadError": "Could not load animation.",
 "svgLoadError": "Could not load SVG:\n{error}",
+"adUnavailableTitle": "Oops!",
+"adUnavailableMessage": "The ad isn't available right now. Please try again later!",
+"adUnavailableOkay": "Okay",
 "shareArtworkText": "I colored this picture in Tombi's World! 🎨💖",
 "notificationTitle": "Tombi's World",
 

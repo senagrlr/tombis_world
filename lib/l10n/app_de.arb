@@ -26,6 +26,9 @@
   "playStoreOpenError": "Der Play Store konnte nicht geöffnet werden.",
   "splashLoadError": "Die Animation konnte nicht geladen werden.",
   "svgLoadError": "Die SVG-Datei konnte nicht geladen werden:\n{error}",
+  "adUnavailableTitle": "Hoppla!",
+  "adUnavailableMessage": "Die Werbung ist gerade nicht verfügbar. Bitte versuche es später noch einmal!",
+  "adUnavailableOkay": "Okay",
   "shareArtworkText": "Ich habe dieses Bild in Tombis Welt ausgemalt! 🎨💖",
   "notificationTitle": "Tombis Welt",
 

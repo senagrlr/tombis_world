@@ -257,6 +257,24 @@ abstract class AppLocalizations {
   /// **'Could not load SVG:\n{error}'**
   String svgLoadError(String error);
 
+  /// No description provided for @adUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops!'**
+  String get adUnavailableTitle;
+
+  /// No description provided for @adUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The ad isn\'t available right now. Please try again later!'**
+  String get adUnavailableMessage;
+
+  /// No description provided for @adUnavailableOkay.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay'**
+  String get adUnavailableOkay;
+
   /// No description provided for @shareArtworkText.
   ///
   /// In en, this message translates to:
