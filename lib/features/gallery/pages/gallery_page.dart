@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/asset_paths.dart';
 import '../../../core/services/button_sound_service.dart';
 import '../data/gallery_data.dart';
 import '../widgets/gallery_header.dart';
@@ -16,7 +17,7 @@ class GalleryPage extends StatefulWidget {
 
 class _GalleryPageState extends State<GalleryPage> {
   static const AssetImage _backgroundImage = AssetImage(
-    'assets/images/gallery/gallery_background.png',
+    AssetPaths.galleryBackground,
   );
 
   @override

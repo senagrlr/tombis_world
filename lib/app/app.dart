@@ -1,15 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/app_localizations.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_theme.dart';
 import '../core/services/notification_startup_service.dart';
 import '../core/services/background_music_service.dart';
+import '../features/settings/models/setting_key.dart';
+import '../features/settings/repositories/settings_repository.dart';
 import 'app_router.dart';
 
 class TombisWorldApp extends ConsumerStatefulWidget {
@@ -52,15 +52,16 @@ class _TombisWorldAppState extends ConsumerState<TombisWorldApp>
   }
 
   Future<void> _resumeMusicIfEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
+    final repository = ref.read(settingsRepositoryProvider);
+
+    final musicEnabled =
+    await repository.getSetting(SettingKey.music);
 
     if (!mounted ||
         WidgetsBinding.instance.lifecycleState !=
             AppLifecycleState.resumed) {
       return;
     }
-
-    final musicEnabled = prefs.getBool('music') ?? true;
 
     if (musicEnabled) {
       await BackgroundMusicService.resume();

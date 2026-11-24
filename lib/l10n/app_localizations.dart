@@ -254,8 +254,14 @@ abstract class AppLocalizations {
   /// No description provided for @svgLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load SVG:\n{error}'**
-  String svgLoadError(String error);
+  /// **'Could not load the picture. Please try again.'**
+  String get svgLoadError;
+
+  /// No description provided for @retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
 
   /// No description provided for @shareArtworkText.
   ///
@@ -538,6 +544,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Let\'s make the world a little brighter! 🌈'**
   String get notificationMessage20;
+
+  /// No description provided for @leaveColoringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave coloring?'**
+  String get leaveColoringTitle;
+
+  /// No description provided for @leaveColoringMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coloring progress will be lost. Are you sure you want to leave?'**
+  String get leaveColoringMessage;
 
   /// No description provided for @playAccessibility.
   ///

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_paths.dart';
 import '../models/coloring_page.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -99,8 +100,7 @@ class GalleryThumbnail extends StatelessWidget {
                                         originalThumbnailWidth,
                                         height: originalHeight,
                                         fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (_, _, _) {
+                                        errorBuilder: (_, _, _) {
                                           return const Center(
                                             child: Icon(
                                               Icons.image_outlined,
@@ -145,7 +145,7 @@ class GalleryThumbnail extends StatelessWidget {
                     child: Transform.rotate(
                       angle: 0.20,
                       child: Image.asset(
-                        'assets/images/gallery/rewarded_ad_icon.png',
+                        AssetPaths.rewardedAdIcon,
                         width: 65,
                         height: 65,
                         fit: BoxFit.contain,

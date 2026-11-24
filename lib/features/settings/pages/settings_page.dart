@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../core/constants/asset_paths.dart';
 import '../../../core/services/button_sound_service.dart';
 import '../controllers/settings_controller.dart';
+import '../models/setting_key.dart';
 import '../widgets/settings_header.dart';
 import '../widgets/settings_option.dart';
 
@@ -23,7 +25,7 @@ class SettingsPage extends ConsumerWidget {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-              'assets/images/gallery/gallery_background.png',
+              AssetPaths.galleryBackground,
             ),
             fit: BoxFit.cover,
           ),
@@ -47,19 +49,19 @@ class SettingsPage extends ConsumerWidget {
                       children: [
                         for (final item in [
                           (
-                          'music',
+                          SettingKey.music,
                           l10n.music,
-                          'assets/images/settings/music_icon.png',
+                          AssetPaths.musicIcon,
                           ),
                           (
-                          'sound',
+                          SettingKey.sound,
                           l10n.sound,
-                          'assets/images/settings/sound_icon.png',
+                          AssetPaths.soundIcon,
                           ),
                           (
-                          'notification',
+                          SettingKey.notification,
                           l10n.notification,
-                          'assets/images/settings/notification_icon.png',
+                          AssetPaths.notificationIcon,
                           ),
                         ]) ...[
                           SettingsOption(
@@ -68,11 +70,10 @@ class SettingsPage extends ConsumerWidget {
                             value: settings == null
                                 ? false
                                 : switch (item.$1) {
-                              'music' => settings.music,
-                              'sound' => settings.sound,
-                              'notification' =>
+                              SettingKey.music => settings.music,
+                              SettingKey.sound => settings.sound,
+                              SettingKey.notification =>
                               settings.notification,
-                              _ => false,
                             },
                             onChanged: settings == null
                                 ? null
@@ -93,8 +94,7 @@ class SettingsPage extends ConsumerWidget {
 
                         SettingsOption(
                           title: l10n.privacy,
-                          iconPath:
-                          'assets/images/settings/document_icon.png',
+                          iconPath: AssetPaths.documentIcon,
                           onTap: () {
                             ButtonSoundService.play();
                           },

@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
+import 'core/constants/asset_paths.dart';
 import 'core/theme/app_colors.dart';
 import 'core/services/background_music_service.dart';
 import 'core/services/button_sound_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/widgets/tombi_loading.dart';
+import 'features/settings/repositories/settings_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,26 +39,31 @@ Future<void> main() async {
   // Galeri arka planını uygulama açılırken belleğe yükle.
   await _preloadGalleryBackground();
 
-  // Kullanıcının kayıtlı ses tercihlerini oku.
-  final prefs = await SharedPreferences.getInstance();
+  // Ayar repository'sini oluştur.
+  final settingsRepository = SettingsRepository();
 
-  final musicEnabled = prefs.getBool('music') ?? true;
-  final soundEnabled = prefs.getBool('sound') ?? true;
+  // Kullanıcının kayıtlı tercihlerini oku.
+  final settings = await settingsRepository.loadSettings();
 
   // Buton seslerini başlat ve tercihi uygula.
   await ButtonSoundService.initialize();
-  await ButtonSoundService.setEnabled(soundEnabled);
+  await ButtonSoundService.setEnabled(settings.sound);
 
   // Arka plan müziğini başlat ve tercihi uygula.
   await BackgroundMusicService.initialize();
-  await BackgroundMusicService.setEnabled(musicEnabled);
+  await BackgroundMusicService.setEnabled(settings.music);
 
   // Bildirim servisini başlat.
   await NotificationService.instance.initialize();
 
   runApp(
-    const ProviderScope(
-      child: TombisWorldApp(),
+    ProviderScope(
+      overrides: [
+        settingsRepositoryProvider.overrideWithValue(
+          settingsRepository,
+        ),
+      ],
+      child: const TombisWorldApp(),
     ),
   );
 }
@@ -65,7 +71,7 @@ Future<void> main() async {
 // Galeri arka planını önceden çözümleyip önbelleğe al.
 Future<void> _preloadGalleryBackground() async {
   const imageProvider = AssetImage(
-    'assets/images/gallery/gallery_background.png',
+    AssetPaths.galleryBackground,
   );
 
   final imageStream = imageProvider.resolve(

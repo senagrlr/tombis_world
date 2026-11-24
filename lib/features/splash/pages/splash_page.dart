@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/services/background_music_service.dart';
 import '../../../l10n/app_localizations.dart';
@@ -54,7 +55,7 @@ class _SplashPageState extends State<SplashPage>
       backgroundColor: AppColors.splashBg,
       body: Center(
         child: Lottie.asset(
-          'assets/animations/splash_animation.json',
+          AssetPaths.splashAnimation,
           controller: _controller,
           width: 300,
           height: 300,
@@ -66,7 +67,9 @@ class _SplashPageState extends State<SplashPage>
               ..forward();
           },
           errorBuilder: (context, error, stackTrace) {
-            return Text(AppLocalizations.of(context).splashLoadError);
+            return Text(
+              AppLocalizations.of(context).splashLoadError,
+            );
           },
         ),
       ),

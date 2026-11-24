@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'dart:typed_data';
@@ -8,9 +7,9 @@ import '../engine/coloring_session.dart';
 import 'canvas_gesture_handler.dart';
 import 'coloring_paint_painter.dart';
 import 'svg_outline_painter.dart';
+import 'svg_load_error.dart';
 import '../services/coloring_export_service.dart';
 import '../models/coloring_tool.dart';
-import '../../../l10n/app_localizations.dart';
 
 class ColoringCanvas extends StatefulWidget {
   final String imagePath;
@@ -67,6 +66,11 @@ class ColoringCanvasState extends State<ColoringCanvas> {
     super.dispose();
   }
 
+  bool get hasUnsavedChanges =>
+      _session.operations.isNotEmpty ||
+          _session.activeStroke != null ||
+          _session.activeEraser != null;
+
   bool undo() => _session.undo();
 
   Future<Uint8List?> exportPng() async {
@@ -89,6 +93,14 @@ class ColoringCanvasState extends State<ColoringCanvas> {
     _session.clear();
     _transform.reset();
     _lastAllowedTransform = null;
+  }
+
+  void _retryLoading() {
+    if (_session.isLoading) return;
+
+    _lastAllowedTransform = null;
+    _transform.reset();
+    _session.load(widget.imagePath);
   }
 
   void _onInteractionStart(ScaleStartDetails details) {
@@ -133,8 +145,7 @@ class ColoringCanvasState extends State<ColoringCanvas> {
                 operations: _session.operations,
                 activeBrush: _session.activeStroke,
                 activeEraser: _session.activeEraser,
-                revision:
-                _session.repaint.strokeRevision,
+                revision: _session.repaint.strokeRevision,
               ),
               child: const SizedBox.expand(),
             );
@@ -186,18 +197,15 @@ class ColoringCanvasState extends State<ColoringCanvas> {
     }
 
     if (_session.error != null) {
-      return Center(
-        child: Text(
-          AppLocalizations.of(context).svgLoadError(
-            _session.error.toString(),
-          ),
-          textAlign: TextAlign.center,
-        ),
+      return SvgLoadError(
+        onRetry: _retryLoading,
       );
     }
 
     if (_session.document == null) {
-      return const SizedBox.shrink();
+      return SvgLoadError(
+        onRetry: _retryLoading,
+      );
     }
 
     return LayoutBuilder(

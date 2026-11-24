@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/splash/pages/splash_page.dart';
@@ -16,6 +17,29 @@ abstract final class AppRoutes {
   static const gallery = '/gallery';
   static const coloring = '/coloring';
   static const completion = '/completion';
+}
+
+class InvalidRouteDataPage extends StatelessWidget {
+  const InvalidRouteDataPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Sayfa açılamadı. Gerekli bilgiler eksik.'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go(AppRoutes.gallery),
+              child: const Text('Galeriye dön'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 final appRouter = GoRouter(
@@ -40,10 +64,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.coloring,
       builder: (context, state) {
-        final imagePath = state.extra as String;
+        final extra = state.extra;
+
+        if (extra is! String || extra.trim().isEmpty) {
+          return const InvalidRouteDataPage();
+        }
 
         return ColoringPageScreen(
-          imagePath: imagePath,
+          imagePath: extra,
         );
       },
     ),
@@ -52,19 +80,37 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final extra = state.extra;
 
-        if (extra is Map<String, dynamic>) {
+        if (extra is String && extra.trim().isNotEmpty) {
           return CompletionPage(
-            imagePath: extra['imagePath'] as String,
-            paintedImage:
-            extra['paintedImage'] as Uint8List?,
-            showRatePopup:
-            extra['showRatePopup'] as bool? ?? false,
+            imagePath: extra,
           );
         }
 
-        return CompletionPage(
-          imagePath: extra as String,
-        );
+        if (extra is Map) {
+          final imagePath = extra['imagePath'];
+          final paintedImage = extra['paintedImage'];
+          final showRatePopup = extra['showRatePopup'];
+
+          if (imagePath is! String || imagePath.trim().isEmpty) {
+            return const InvalidRouteDataPage();
+          }
+
+          if (paintedImage != null && paintedImage is! Uint8List) {
+            return const InvalidRouteDataPage();
+          }
+
+          if (showRatePopup != null && showRatePopup is! bool) {
+            return const InvalidRouteDataPage();
+          }
+
+          return CompletionPage(
+            imagePath: imagePath,
+            paintedImage: paintedImage as Uint8List?,
+            showRatePopup: showRatePopup as bool? ?? false,
+          );
+        }
+
+        return const InvalidRouteDataPage();
       },
     ),
   ],

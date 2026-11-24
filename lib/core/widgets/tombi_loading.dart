@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+import '../constants/asset_paths.dart';
+
 class TombiLoading extends StatelessWidget {
   const TombiLoading({super.key});
-
-  static const String _animationPath =
-      'assets/animations/tombi_loading.json';
 
   static LottieComposition? _cachedComposition;
   static Future<LottieComposition>? _loadingFuture;
@@ -26,7 +25,7 @@ class TombiLoading extends StatelessWidget {
   static Future<LottieComposition> _loadComposition() async {
     try {
       final composition = await AssetLottie(
-        _animationPath,
+        AssetPaths.tombiLoadingAnimation,
       ).load();
 
       _cachedComposition = composition;

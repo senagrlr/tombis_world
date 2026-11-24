@@ -1,25 +1,27 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/settings/controllers/settings_controller.dart';
+import '../../features/settings/models/setting_key.dart';
+import '../../features/settings/repositories/settings_repository.dart';
 import 'notification_service.dart';
 
 class NotificationStartupService {
   NotificationStartupService._();
 
   static Future<void> initialize(WidgetRef ref) async {
-    final prefs = await SharedPreferences.getInstance();
+    final repository = ref.read(settingsRepositoryProvider);
 
     final notificationService = NotificationService.instance;
 
     final permissionAsked =
-        prefs.getBool('notification_permission_asked') ?? false;
+    await repository.hasAskedNotificationPermission();
+
+    if (!ref.context.mounted) return;
 
     if (!permissionAsked) {
       final granted = await notificationService.requestPermission();
 
-      await prefs.setBool('notification_permission_asked', true);
+      await repository.markNotificationPermissionAsked();
 
       if (!ref.context.mounted) return;
 
@@ -29,7 +31,7 @@ class NotificationStartupService {
 
       await ref
           .read(settingsProvider.notifier)
-          .updateSetting('notification', granted);
+          .updateSetting(SettingKey.notification, granted);
 
       return;
     }
