@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/asset_paths.dart';
 import '../models/coloring_page.dart';
+import '../controllers/session_unlock_controller.dart';
 import '../../../l10n/app_localizations.dart';
 
 class GalleryThumbnail extends StatelessWidget {
@@ -18,12 +20,31 @@ class GalleryThumbnail extends StatelessWidget {
   static const double cardInset = 5;
 
   static const Color normalBorderColor = Color(0xFF5B9EE2);
-
-  // Ödüllü görsellerin sarı kenarlığı
   static const Color rewardedBorderColor = Color(0xFFFFC533);
 
   @override
   Widget build(BuildContext context) {
+    if (!page.isRewarded) {
+      return _buildThumbnail(context, isLocked: false);
+    }
+
+    final session = SessionUnlockController.instance;
+
+    return ListenableBuilder(
+      listenable: session,
+      builder: (context, child) {
+        return _buildThumbnail(
+          context,
+          isLocked: session.isLocked(page),
+        );
+      },
+    );
+  }
+
+  Widget _buildThumbnail(
+      BuildContext context, {
+        required bool isLocked,
+      }) {
     return LayoutBuilder(
       builder: (context, cardConstraints) {
         final originalThumbnailWidth =
@@ -48,7 +69,7 @@ class GalleryThumbnail extends StatelessWidget {
                       color: const Color(0xFFFFF2DE),
                       borderRadius: BorderRadius.circular(22),
                       border: Border.all(
-                        color: (page.isRewarded
+                        color: (isLocked
                             ? rewardedBorderColor
                             : normalBorderColor)
                             .withValues(alpha: 0.85),
@@ -135,9 +156,7 @@ class GalleryThumbnail extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Yalnızca ödüllü görsellerde video ikonu
-              if (page.isRewarded)
+              if (isLocked)
                 Positioned(
                   top: -13,
                   right: -12,

@@ -89,6 +89,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retryButton => 'Try again';
 
   @override
+  String get adUnavailableTitle => 'Oops!';
+
+  @override
+  String get adUnavailableMessage =>
+      'The ad isn\'t available right now. Please try again later!';
+
+  @override
+  String get adUnavailableOkay => 'Okay';
+
+  @override
   String get shareArtworkText =>
       'I colored this picture in Tombi\'s World! 🎨💖';
 

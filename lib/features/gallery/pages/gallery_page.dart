@@ -1,12 +1,16 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/services/button_sound_service.dart';
+import '../controllers/gallery_unlock_controller.dart';
 import '../data/gallery_data.dart';
+import '../models/coloring_page.dart';
 import '../widgets/gallery_header.dart';
 import '../widgets/gallery_grid.dart';
+import '../widgets/ad_unavailable_dialog.dart';
 
 class GalleryPage extends StatefulWidget {
   const GalleryPage({super.key});
@@ -20,12 +24,59 @@ class _GalleryPageState extends State<GalleryPage> {
     AssetPaths.galleryBackground,
   );
 
+  final GalleryUnlockController _unlockController =
+      GalleryUnlockController.instance;
+
+  bool _isOpeningPage = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Galeri arka planını önceden belleğe al.
     precacheImage(_backgroundImage, context);
+  }
+
+  Future<void> _onPageSelected(ColoringPage page) async {
+    if (_isOpeningPage) return;
+
+    _isOpeningPage = true;
+
+    try {
+      ButtonSoundService.play();
+
+      if (_unlockController.isLocked(page)) {
+        final result = await _unlockController.unlockPage(page);
+
+        if (!mounted) return;
+
+        if (ModalRoute.of(context)?.isCurrent != true) return;
+
+        if (result == GalleryUnlockResult.adUnavailable) {
+          await showDialog<void>(
+            context: context,
+            barrierColor: Colors.black54,
+            builder: (_) => const AdUnavailableDialog(),
+          );
+
+          return;
+        }
+
+        if (result != GalleryUnlockResult.unlocked) {
+          return;
+        }
+      }
+
+      if (!mounted) return;
+
+      if (ModalRoute.of(context)?.isCurrent != true) return;
+
+      await context.push(
+        AppRoutes.coloring,
+        extra: page.imagePath,
+      );
+    } finally {
+      _isOpeningPage = false;
+    }
   }
 
   @override
@@ -47,14 +98,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 const GalleryHeader(),
                 GalleryGrid(
                   pages: GalleryData.pages,
-                  onPageSelected: (page) {
-                    ButtonSoundService.tap(() {
-                      context.push(
-                        AppRoutes.coloring,
-                        extra: page.imagePath,
-                      );
-                    });
-                  },
+                  onPageSelected: _onPageSelected,
                 ),
               ],
             ),

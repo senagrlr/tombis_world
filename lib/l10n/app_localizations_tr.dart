@@ -88,6 +88,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get retryButton => 'Tekrar dene';
 
   @override
+  String get adUnavailableTitle => 'Hay aksi!';
+
+  @override
+  String get adUnavailableMessage =>
+      'Reklam şu anda kullanılamıyor. Lütfen daha sonra tekrar dene!';
+
+  @override
+  String get adUnavailableOkay => 'Tamam';
+
+  @override
   String get shareArtworkText =>
       'Tombi\'nin Dünyası\'nda bu resmi ben boyadım! 🎨💖';
 

@@ -93,6 +93,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get retryButton => 'Erneut versuchen';
 
   @override
+  String get adUnavailableTitle => 'Hoppla!';
+
+  @override
+  String get adUnavailableMessage =>
+      'Die Werbung ist gerade nicht verfügbar. Bitte versuche es später noch einmal!';
+
+  @override
+  String get adUnavailableOkay => 'Okay';
+
+  @override
   String get shareArtworkText =>
       'Ich habe dieses Bild in Tombis Welt ausgemalt! 🎨💖';
 

@@ -49,7 +49,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get eraser => 'Borracha';
 
   @override
-  String get picker => 'Conta-gotas';
+  String get picker => 'Pipeta';
 
   @override
   String get resetColoringTitle => 'Quer começar a pintar de novo?';
@@ -90,6 +90,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get retryButton => 'Tentar novamente';
+
+  @override
+  String get adUnavailableTitle => 'Ups!';
+
+  @override
+  String get adUnavailableMessage =>
+      'O anúncio não está disponível de momento. Tenta novamente mais tarde!';
+
+  @override
+  String get adUnavailableOkay => 'Está bem';
 
   @override
   String get shareArtworkText => 'Pintei este desenho no Mundo do Tombi! 🎨💖';
@@ -295,7 +305,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get eraser => 'Borracha';
 
   @override
-  String get picker => 'Conta-gotas';
+  String get picker => 'Pipeta';
 
   @override
   String get resetColoringTitle => 'Quer começar a pintar de novo?';
@@ -336,6 +346,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get retryButton => 'Tentar novamente';
+
+  @override
+  String get adUnavailableTitle => 'Ops!';
+
+  @override
+  String get adUnavailableMessage =>
+      'O anúncio não está disponível no momento. Tente novamente mais tarde!';
+
+  @override
+  String get adUnavailableOkay => 'Tudo bem';
 
   @override
   String get shareArtworkText => 'Pintei este desenho no Mundo do Tombi! 🎨💖';

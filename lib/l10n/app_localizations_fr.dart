@@ -89,6 +89,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retryButton => 'Réessayer';
 
   @override
+  String get adUnavailableTitle => 'Oups !';
+
+  @override
+  String get adUnavailableMessage =>
+      'La publicité n\'est pas disponible pour le moment. Réessaie un peu plus tard !';
+
+  @override
+  String get adUnavailableOkay => 'D\'accord';
+
+  @override
   String get shareArtworkText =>
       'J\'ai colorié ce dessin dans Le monde de Tombi ! 🎨💖';
 

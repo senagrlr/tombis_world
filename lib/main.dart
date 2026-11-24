@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,12 +12,25 @@ import 'core/services/background_music_service.dart';
 import 'core/services/button_sound_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/widgets/tombi_loading.dart';
+import 'core/ads/ad_frequency_controller.dart';
+import 'core/ads/ad_coordinator.dart';
+import 'core/session/session_timeout_controller.dart';
+import 'core/session/session_lifecycle_controller.dart';
+import 'features/gallery/controllers/session_unlock_controller.dart';
 import 'features/settings/repositories/settings_repository.dart';
+
+final _sessionLifecycleController = SessionLifecycleController(
+  timeoutController: SessionTimeoutController(),
+  onSessionExpired: SessionUnlockController.instance.resetSession,
+);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Uygulamanın tamamını dikey moda kilitle.
+  AdFrequencyController.instance.initialize();
+
+  _sessionLifecycleController.initialize();
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -33,27 +47,20 @@ Future<void> main() async {
     ),
   );
 
-  // Tombi loading animasyonunu önceden yükle.
   await TombiLoading.preload();
 
-  // Galeri arka planını uygulama açılırken belleğe yükle.
   await _preloadGalleryBackground();
 
-  // Ayar repository'sini oluştur.
   final settingsRepository = SettingsRepository();
 
-  // Kullanıcının kayıtlı tercihlerini oku.
   final settings = await settingsRepository.loadSettings();
 
-  // Buton seslerini başlat ve tercihi uygula.
   await ButtonSoundService.initialize();
   await ButtonSoundService.setEnabled(settings.sound);
 
-  // Arka plan müziğini başlat ve tercihi uygula.
   await BackgroundMusicService.initialize();
   await BackgroundMusicService.setEnabled(settings.music);
 
-  // Bildirim servisini başlat.
   await NotificationService.instance.initialize();
 
   runApp(
@@ -66,9 +73,12 @@ Future<void> main() async {
       child: const TombisWorldApp(),
     ),
   );
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(AdCoordinator.instance.initialize());
+  });
 }
 
-// Galeri arka planını önceden çözümleyip önbelleğe al.
 Future<void> _preloadGalleryBackground() async {
   const imageProvider = AssetImage(
     AssetPaths.galleryBackground,

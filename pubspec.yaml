@@ -54,6 +54,7 @@ dependencies:
   flutter_local_notifications: ^23.0.3
   timezone: ^0.11.2
   flutter_timezone: ^5.1.1
+  google_mobile_ads: ^9.2.0
 
 
 dev_dependencies:
@@ -94,6 +95,7 @@ flutter:
     - assets/sounds/
     - assets/images/gallery/
     - assets/images/gallery/thumbnails/
+    - assets/images/gallery/popups/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
