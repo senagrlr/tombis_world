@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/cozy_back_button.dart';
 import '../../../core/services/rate_popup_service.dart';
@@ -180,8 +181,7 @@ class _CompletionPageState extends State<CompletionPage> {
     try {
       await _shareService.shareArtwork(
         pngBytes,
-        text: AppLocalizations.of(context)
-            .shareArtworkText,
+        text: AppLocalizations.of(context).shareArtworkText,
       );
     } catch (error, stackTrace) {
       debugPrint('Artwork share error: $error');
@@ -221,7 +221,7 @@ class _CompletionPageState extends State<CompletionPage> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-              'assets/images/gallery/gallery_background.png',
+              AssetPaths.galleryBackground,
             ),
             fit: BoxFit.cover,
           ),
@@ -263,12 +263,12 @@ class _CompletionPageState extends State<CompletionPage> {
                     child: Column(
                       children: [
                         CompletionActions.actionButton(
-                          'assets/images/completion_ui/home_button.png',
+                          AssetPaths.completionHomeButton,
                               () => context.go(AppRoutes.home),
                         ),
                         const SizedBox(height: 5),
                         CompletionActions.actionButton(
-                          'assets/images/completion_ui/download_button.png',
+                          AssetPaths.completionDownloadButton,
                           _downloadArtwork,
                         ),
                       ],
@@ -280,7 +280,7 @@ class _CompletionPageState extends State<CompletionPage> {
                     bottom: 20,
                     right: 20,
                     child: CompletionActions.actionButton(
-                      'assets/images/completion_ui/share_button.png',
+                      AssetPaths.completionShareButton,
                       _shareArtwork,
                     ),
                   ),

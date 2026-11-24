@@ -4,9 +4,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
+import 'core/constants/asset_paths.dart';
 import 'core/theme/app_colors.dart';
 import 'core/services/background_music_service.dart';
 import 'core/services/button_sound_service.dart';
@@ -17,6 +17,7 @@ import 'core/ads/ad_coordinator.dart';
 import 'core/session/session_timeout_controller.dart';
 import 'core/session/session_lifecycle_controller.dart';
 import 'features/gallery/controllers/session_unlock_controller.dart';
+import 'features/settings/repositories/settings_repository.dart';
 
 final _sessionLifecycleController = SessionLifecycleController(
   timeoutController: SessionTimeoutController(),
@@ -50,22 +51,26 @@ Future<void> main() async {
 
   await _preloadGalleryBackground();
 
-  final prefs = await SharedPreferences.getInstance();
+  final settingsRepository = SettingsRepository();
 
-  final musicEnabled = prefs.getBool('music') ?? true;
-  final soundEnabled = prefs.getBool('sound') ?? true;
+  final settings = await settingsRepository.loadSettings();
 
   await ButtonSoundService.initialize();
-  await ButtonSoundService.setEnabled(soundEnabled);
+  await ButtonSoundService.setEnabled(settings.sound);
 
   await BackgroundMusicService.initialize();
-  await BackgroundMusicService.setEnabled(musicEnabled);
+  await BackgroundMusicService.setEnabled(settings.music);
 
   await NotificationService.instance.initialize();
 
   runApp(
-    const ProviderScope(
-      child: TombisWorldApp(),
+    ProviderScope(
+      overrides: [
+        settingsRepositoryProvider.overrideWithValue(
+          settingsRepository,
+        ),
+      ],
+      child: const TombisWorldApp(),
     ),
   );
 
@@ -76,7 +81,7 @@ Future<void> main() async {
 
 Future<void> _preloadGalleryBackground() async {
   const imageProvider = AssetImage(
-    'assets/images/gallery/gallery_background.png',
+    AssetPaths.galleryBackground,
   );
 
   final imageStream = imageProvider.resolve(

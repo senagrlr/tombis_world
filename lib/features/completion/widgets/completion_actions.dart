@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_paths.dart';
+
 class CompletionActions extends StatelessWidget {
   final VoidCallback onHome;
   final VoidCallback onDownload;
@@ -35,23 +37,21 @@ class CompletionActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const path = 'assets/images/completion_ui/';
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
         actionButton(
-          '${path}home_button.png',
+          AssetPaths.completionHomeButton,
           onHome,
         ),
         const SizedBox(height: 5),
         actionButton(
-          '${path}download_button.png',
+          AssetPaths.completionDownloadButton,
           onDownload,
         ),
         const Spacer(),
         actionButton(
-          '${path}share_button.png',
+          AssetPaths.completionShareButton,
           onShare,
         ),
       ],

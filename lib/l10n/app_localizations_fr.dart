@@ -83,9 +83,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get splashLoadError => 'Impossible de charger l\'animation.';
 
   @override
-  String svgLoadError(String error) {
-    return 'Impossible de charger le fichier SVG :\n$error';
-  }
+  String get svgLoadError => 'Impossible de charger l’image. Réessaie.';
+
+  @override
+  String get retryButton => 'Réessayer';
 
   @override
   String get adUnavailableTitle => 'Oups !';
@@ -251,6 +252,13 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get notificationMessage20 =>
       'Rendons le monde encore plus coloré ! 🌈';
+
+  @override
+  String get leaveColoringTitle => 'Quitter le coloriage ?';
+
+  @override
+  String get leaveColoringMessage =>
+      'Ton coloriage sera perdu. Veux-tu vraiment quitter ?';
 
   @override
   String get playAccessibility => 'Jouer';

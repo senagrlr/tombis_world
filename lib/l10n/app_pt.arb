@@ -25,10 +25,11 @@
   "comingSoon": "Em breve!",
   "playStoreOpenError": "Não foi possível abrir a Play Store.",
   "splashLoadError": "Não foi possível carregar a animação.",
-  "svgLoadError": "Não foi possível carregar o SVG:\n{error}",
   "adUnavailableTitle": "Ups!",
   "adUnavailableMessage": "O anúncio não está disponível de momento. Tenta novamente mais tarde!",
   "adUnavailableOkay": "Está bem",
+  "svgLoadError": "Não foi possível carregar a imagem. Tenta novamente.",
+  "retryButton": "Tentar novamente",
   "shareArtworkText": "Pintei este desenho no Mundo do Tombi! 🎨💖",
   "notificationTitle": "O Mundo do Tombi",
 
@@ -79,6 +80,9 @@
   "notificationMessage18": "Tudo pronto para uma nova aventura colorida? 🖌️",
   "notificationMessage19": "Que tal relaxar e pintar um pouquinho com o Tombi? 💕",
   "notificationMessage20": "Vamos deixar o mundo ainda mais colorido! 🌈",
+
+  "leaveColoringTitle": "Sair da pintura?",
+  "leaveColoringMessage": "O teu progresso será perdido. Tens a certeza de que queres sair?",
 
   "playAccessibility": "Jogar"
 }

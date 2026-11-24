@@ -25,10 +25,11 @@
   "comingSoon": "Bald verfügbar!",
   "playStoreOpenError": "Der Play Store konnte nicht geöffnet werden.",
   "splashLoadError": "Die Animation konnte nicht geladen werden.",
-  "svgLoadError": "Die SVG-Datei konnte nicht geladen werden:\n{error}",
   "adUnavailableTitle": "Hoppla!",
   "adUnavailableMessage": "Die Werbung ist gerade nicht verfügbar. Bitte versuche es später noch einmal!",
   "adUnavailableOkay": "Okay",
+  "svgLoadError": "Das Bild konnte nicht geladen werden. Bitte versuche es erneut.",
+  "retryButton": "Erneut versuchen",
   "shareArtworkText": "Ich habe dieses Bild in Tombis Welt ausgemalt! 🎨💖",
   "notificationTitle": "Tombis Welt",
 
@@ -79,6 +80,9 @@
   "notificationMessage18": "Bereit für ein neues Malabenteuer? 🖌️",
   "notificationMessage19": "Wie wäre es mit einer gemütlichen Malpause mit Tombi? 💕",
   "notificationMessage20": "Machen wir die Welt ein bisschen bunter! 🌈",
+
+  "leaveColoringTitle": "Ausmalen beenden?",
+  "leaveColoringMessage": "Dein Ausmalfortschritt geht verloren. Möchtest du wirklich aufhören?",
 
   "playAccessibility": "Spielen"
 }
